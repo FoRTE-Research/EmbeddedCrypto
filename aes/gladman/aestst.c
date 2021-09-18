@@ -51,12 +51,7 @@
 #  include <windows.h>
 #endif
 #include <string.h>
-
-#ifdef AES_CPP
-#include "aescpp.h"
-#else
 #include "aes.h"
-#endif
 #include "aesaux.h"
 #include "aestst.h"
 
@@ -120,7 +115,7 @@ void cycles(volatile uint64_t *rtn)
 #endif
 }
 
-int main(void)
+int aes_gladman_test()
 {   unsigned char   out[32], ret[32], err = 0;
     f_ectx          alge[1];
     f_dctx          algd[1];
@@ -136,9 +131,6 @@ int main(void)
     message("\nRun tests for the AES algorithm");
 #if defined(USE_DLL)
     message(" (DLL Version)");
-#endif
-#if defined(AES_CPP)
-    message(" (CPP Version)");
 #endif
 
     memset(&alge, 0, sizeof(aes_encrypt_ctx));
