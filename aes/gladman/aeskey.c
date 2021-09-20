@@ -20,6 +20,7 @@ Issue Date: 20/12/2007
 
 #include "aesopt.h"
 #include "aestab.h"
+#include "../config.h"
 
 #if defined( USE_INTEL_AES_IF_PRESENT )
 #  include "aes_ni.h"

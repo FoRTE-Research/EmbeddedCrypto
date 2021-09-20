@@ -24,7 +24,6 @@ Issue Date: 25/09/2018
 #endif
 #include "aes.h"
 #include "aesaux.h"
-#include "aestst.h"
 
 #if defined(__cplusplus)
 extern "C"

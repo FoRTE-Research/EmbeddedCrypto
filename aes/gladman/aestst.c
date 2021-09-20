@@ -46,18 +46,10 @@
 // decrypt = 3243f6a8885a308d313198a2e0370734
 
 #include <stdio.h>
-#include <memory.h>
-#if defined( _MSC_VER )
-#  include <windows.h>
-#endif
 #include <string.h>
 #include "aes.h"
-#include "aesaux.h"
 #include "aestst.h"
-
-#if defined( DLL_IMPORT ) && defined( DYNAMIC_LINK )
-fn_ptrs fn;
-#endif
+#include "../config.h"
 
 void oblk(char m[], unsigned char v[], unsigned long n)
 {   unsigned long i;
