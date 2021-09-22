@@ -21,6 +21,8 @@ SHA  | 256 bit
 
 ## Getting Started
 
+Download ARM GCC commandline tools: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
+
 Select the algorithm you want to use and copy all the file inside the folder to your root folder of board.
 
     .
