@@ -32,6 +32,6 @@ Select the algorithm you want to use and copy all the file inside the folder to 
     └── ...
 
 **RISC-V :**
-Change file name ".risc_Makefile" to "Makefile".
+Change file name ".risc_Makefile" to "Makefile".\
 **MSP432P401R :**
 Uncomment the definition in the file containing the main function.
