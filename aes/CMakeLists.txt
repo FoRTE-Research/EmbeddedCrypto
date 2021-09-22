@@ -6,7 +6,7 @@ ADD_LIBRARY( aesLib STATIC
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(aes_test risc_v_main.c)
+add_executable(aes_test main.c)
 
 TARGET_LINK_LIBRARIES( aes_test
         aesLib )
