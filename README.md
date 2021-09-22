@@ -1,6 +1,6 @@
 ### FoRTE-Research - EmbeddedCrypto
 
-This project measures the efficiency of different crypto algorithms installed in different microcontrollers. We identify "best of breed" crypto for ultra-low SWaP devices in an energy harvesting context.
+This project measures the efficiency of different crypto algorithms installed in different microcontrollers. We identify the "best of breed" crypto for ultra-low SWaP devices in an energy harvesting context.
 - Quantify the performance vs. energy trade space
 - Identify device features that impact this trade space the most
 - Assess the security impact when the attacker has access to intermediate results
@@ -33,3 +33,5 @@ Select the algorithm you want to use and copy all the file inside the folder to 
 
 **RISC-V :**
 Change file name ".risc_Makefile" to "Makefile".
+**MSP432P401R :**
+Uncomment the definition in the file containing the main function.
