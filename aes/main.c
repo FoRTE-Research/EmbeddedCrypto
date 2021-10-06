@@ -43,6 +43,7 @@ uint8_t pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d,
 
 #if defined( gladman_aes )
 #ifdef AES_128
+// defines for init and decrypt as well
 #define test_encrypt(key, pt, ct) aes_gladman_128(key, pt, ct); // Do for all
 #endif
 #ifdef AES_192
@@ -63,6 +64,9 @@ uint8_t pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d,
 
 int main(void)
 {
+    // init_aes()
+    // encrypt() or decrypt() possibly many times
+    // check_result()
     test_encrypt(key, pt, ct)
       // You should verify the returned ct to make sure everything is working
     return 0;
