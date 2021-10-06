@@ -63,8 +63,8 @@ void AES_ECB_decrypt(const struct AES_ctx* ctx, uint8_t* buf);
 void AES_encrypt(const struct AES_ctx* ctx, uint8_t* buf);
 void AES_decrypt(const struct AES_ctx* ctx, uint8_t* buf);
 
-int test_AES_encrypt();
-int test_AES_decrypt();
+int test_AES_encrypt(uint8_t key[], uint8_t in[], uint8_t out[]);
+int test_AES_decrypt(uint8_t key[], uint8_t in[], uint8_t out[]);
 
 
 #endif // _AES_H_
