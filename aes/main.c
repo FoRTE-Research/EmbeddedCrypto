@@ -1,12 +1,13 @@
 /* need to choose which AES implementation to run */
-//define gladman_aes
-#define tiny_aes
+#define gladman_aes
+//#define tiny_aes
 
 /* need to uncomment if the board you are using is MSP432P401R */
 //#define msp432p401r
 
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
-
+#include <stdint.h>
+#include "config.h"
 #ifdef gladman_aes
 #include "gladman/aestst.h"
 #endif
@@ -29,16 +30,16 @@
     uint8_t key[] = { 0x8e, 0x73, 0xb0, 0xf7, 0xda, 0x0e, 0x64, 0x52, 0xc8, 0x10, 0xf3, 0x2b, 0x80, 0x90, 0x79, 0xe5,
                       0x62, 0xf8, 0xea, 0xd2, 0x52, 0x2c, 0x6b, 0x7b };
     uint8_t ct[] = { 0xbd, 0x33, 0x4f, 0x1d, 0x6e, 0x45, 0xf2, 0x5f, 0xf7, 0x12, 0xa2, 0x14, 0x57, 0x1f, 0xa5, 0xcc };
-#elif defined(AES_128)
+#elif defined( AES_128 )
     uint8_t key[] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
     uint8_t ct[] = { 0x3a, 0xd7, 0x7b, 0xb4, 0x0d, 0x7a, 0x36, 0x60, 0xa8, 0x9e, 0xca, 0xf3, 0x24, 0x66, 0xef, 0x97 };
 #endif
 
 #if defined( gladman_aes )
 //    Not yet implemented
-//    #define test_encrypt_128(a, b, c) aes_gladman_test(a, b, c);
-//    #define test_encrypt_192(a, b, c) aes_gladman_test(a, b, c);
-//    #define test_encrypt_256(a, b, c) aes_gladman_test(a, b, c);
+    #define test_encrypt_128(a, b, c) aes_gladman_128(a, b, c);
+    #define test_encrypt_192(a, b, c) aes_gladman_192(a, b, c);
+    #define test_encrypt_256(a, b, c) aes_gladman_256(a, b, c);
 #endif
 
 #if defined( tiny_aes )
@@ -53,8 +54,8 @@
 
 int main(void) {
     uint8_t pt[]  = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
-//    test_encrypt_128(&key, &pt, &ct);
-    test_encrypt_192(&key, &pt, &ct);
+    test_encrypt_128(key, pt, ct);
+//    test_encrypt_192(*key, *pt, *ct);
 //    test_encrypt_256(&key, &pt, &ct);
     return 0;
 }
