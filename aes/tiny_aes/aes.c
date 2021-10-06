@@ -144,26 +144,6 @@ static uint8_t getSBoxValue(uint8_t num)
 */
 #define getSBoxValue(num) (sbox[(num)])
 
-static void phex(uint8_t* str);
-
-// prints string as hex
-static void phex(uint8_t* str)
-{
-
-#if defined(AES_256)
-    uint8_t len = 32;
-#elif defined(AES_192)
-    uint8_t len = 24;
-#elif defined(AES_128)
-    uint8_t len = 16;
-#endif
-
-    unsigned char i;
-    for (i = 0; i < len; ++i)
-        printf("%.2x", str[i]);
-    printf("\n");
-}
-
 // This function produces Nb(Nr+1) round keys. The round keys are used in each round to decrypt the states. 
 static void KeyExpansion(uint8_t* RoundKey, const uint8_t* Key)
 {
@@ -242,17 +222,6 @@ void AES_init_ctx(struct AES_ctx* ctx, const uint8_t* key)
 {
   KeyExpansion(ctx->RoundKey, key);
 }
-#if (defined(CBC) && (CBC == 1)) || (defined(CTR) && (CTR == 1))
-void AES_init_ctx_iv(struct AES_ctx* ctx, const uint8_t* key, const uint8_t* iv)
-{
-  KeyExpansion(ctx->RoundKey, key);
-  memcpy (ctx->Iv, iv, AES_BLOCKLEN);
-}
-void AES_ctx_set_iv(struct AES_ctx* ctx, const uint8_t* iv)
-{
-  memcpy (ctx->Iv, iv, AES_BLOCKLEN);
-}
-#endif
 
 // This function adds the round key to state.
 // The round key is added to the state by an XOR function.
@@ -486,24 +455,6 @@ static void InvCipher(state_t* state, const uint8_t* RoundKey)
 /*****************************************************************************/
 /* Public functions:                                                         */
 /*****************************************************************************/
-#if defined(ECB) && (ECB == 1)
-
-
-void AES_ECB_encrypt(const struct AES_ctx* ctx, uint8_t* buf)
-{
-  // The next function call encrypts the PlainText with the Key using AES algorithm.
-  Cipher((state_t*)buf, ctx->RoundKey);
-}
-
-void AES_ECB_decrypt(const struct AES_ctx* ctx, uint8_t* buf)
-{
-  // The next function call decrypts the PlainText with the Key using AES algorithm.
-  InvCipher((state_t*)buf, ctx->RoundKey);
-}
-
-
-#endif // #if defined(ECB) && (ECB == 1)
-
 void AES_encrypt(const struct AES_ctx* ctx, uint8_t* buf)
 {
     // The next function call encrypts the PlainText with the Key using AES algorithm.
@@ -521,50 +472,14 @@ int test_AES_encrypt(uint8_t key[], uint8_t in[], uint8_t out[])
     struct AES_ctx ctx;
     uint8_t i;
 
-    printf("plain text:\n");
-    phex(in);
-    printf("key:\n");
-    phex(key);
-
     AES_init_ctx(&ctx, key);
     AES_encrypt(&ctx, in);
-
-    printf("AES encrypt: ");
-
-    if (0 == memcmp((char*) out, (char*) in, 16)) {
-        printf("SUCCESS!\n");
-        printf("cipher text:\n");
-        phex(in);
-        printf("\n");
-        return(0);
-    } else {
-        printf("FAILURE!\n");
-        return(1);
-    }
 }
 
 int test_AES_decrypt(uint8_t key[], uint8_t in[], uint8_t out[])
 {
     struct AES_ctx ctx;
 
-    printf("cipher text:\n");
-    phex(in);
-    printf("key:\n");
-    phex(key);
-
     AES_init_ctx(&ctx, key);
     AES_decrypt(&ctx, in);
-
-    printf("AES decrypt: ");
-
-    if (0 == memcmp((char*) out, (char*) in, 16)) {
-        printf("SUCCESS!\n");
-        printf("plain text:\n");
-        phex(in);
-        printf("\n");
-        return(0);
-    } else {
-        printf("FAILURE!\n");
-        return(1);
-    }
 }
