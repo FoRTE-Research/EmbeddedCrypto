@@ -1,6 +1,7 @@
 /** need to choose which AES implementation to run **/
 #define gladman_aes
 //#define tiny_aes
+//#define mbedtls_aes
 
 /** need to uncomment if the board you are using is MSP432P401R **/
 #define msp432p401r
@@ -17,6 +18,10 @@
 
 #ifdef tiny_aes
 #include "tiny_aes/aes.h"
+#endif
+
+#ifdef mbedtls_aes
+#include "mbedtls/aes.c"
 #endif
 
 #ifdef msp432p401r
@@ -46,6 +51,10 @@ uint8_t ct[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c, 0x06, 0x4b,
 
 #if defined( tiny_aes )
 #define test_encrypt(a, b, c) test_AES_encrypt(a, b, c);
+#endif
+
+#if defined( mbedtls-aes )
+#define test_encrypt(a, b, c) mbedtls_internal_aes_encrypt( mbedtls_aes_context *ctx, const unsigned char input[16], unsigned char output[16] )
 #endif
 
 int main(void)
