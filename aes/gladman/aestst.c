@@ -66,35 +66,6 @@ unsigned char pih[32];
 unsigned char exh[32];
 unsigned char res[32];
 
-//unsigned char pih[32] = // hex digits of pi
-//{
-//    0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d,
-//    0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34,
-//    0x4a, 0x40, 0x93, 0x82, 0x22, 0x99, 0xf3, 0x1d,
-//    0x00, 0x82, 0xef, 0xa9, 0x8e, 0xc4, 0xe6, 0xc8
-//};
-//
-//unsigned char exh[32] =  // hex digits of e
-//{
-//    0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
-//    0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c,
-//    0x76, 0x2e, 0x71, 0x60, 0xf3, 0x8b, 0x4d, 0xa5,
-//    0x6a, 0x78, 0x4d, 0x90, 0x45, 0x19, 0x0c, 0xfe
-//};
-//
-//unsigned char res[3][32] =
-//{
-//    { 0x39, 0x25, 0x84, 0x1d, 0x02, 0xdc, 0x09, 0xfb,
-//        0xdc, 0x11, 0x85, 0x97, 0x19, 0x6a, 0x0b, 0x32
-//    },
-//    { 0xf9, 0xfb, 0x29, 0xae, 0xfc, 0x38, 0x4a, 0x25,
-//        0x03, 0x40, 0xd8, 0x33, 0xb8, 0x7e, 0xbc, 0x00
-//    },
-//    { 0x1a, 0x6e, 0x6c, 0x2c, 0x66, 0x2e, 0x7d, 0xa6,
-//        0x50, 0x1f, 0xfb, 0x62, 0xbc, 0x9e, 0x93, 0xf3
-//    }
-//};
-
 void gladman_init(uint8_t *key, uint8_t *pt, uint8_t* ct, long n) {
 
     //init key
@@ -112,6 +83,7 @@ void gladman_init(uint8_t *key, uint8_t *pt, uint8_t* ct, long n) {
     }
 }
 
+#if defined( AES_128 )
 int aes_gladman_128(unsigned char *key, unsigned char *pt, unsigned char *ct) {
     unsigned char   out[32] , ret[32], err = 0;
     f_ectx          alge[1];
@@ -136,78 +108,58 @@ int aes_gladman_128(unsigned char *key, unsigned char *pt, unsigned char *ct) {
     return 0;
 
 }
+#endif
 
-//aes_gladman_192(uint8_t key, uint8_t pt, uint8_t ct) {
-//    return 0;
-//}
-//
-//aes_gladman_256(uint8_t key, uint8_t pt, uint8_t ct) {
-//    return 0;
-//}
+#if defined( AES_192 )
+int aes_gladman_192(unsigned char *key, unsigned char *pt, unsigned char *ct) {
+    unsigned char   out[32] , ret[32], err = 0;
+    f_ectx          alge[1];
+    f_dctx          algd[1];
 
-//int gladman_init111()
-//{
-//    unsigned char   out[32], ret[32], err = 0;
-//    f_ectx          alge[1];
-//    f_dctx          algd[1];
-//
-//    message("\nRun tests for the AES algorithm");
-//
-//    memset(&alge, 0, sizeof(aes_encrypt_ctx));
-//    memset(&algd, 0, sizeof(aes_decrypt_ctx));
-//
-//#if defined( AES_128 )
-//    memset(out, 0xcc, 16); memset(ret, 0xcc, 16);
-//    printf("\n\n// lengths:  block = 16, bytes, key = 16 bytes");
-//    f_enc_key128(alge, exh);
-//    oblk("// key     = ", exh, 16);
-//    oblk("// input   = ", pih, 16);
-//    do_enc(alge, pih, out, 1);
-//    oblk("// encrypt = ", out, 16);
-//    if(memcmp(out, res[0], 16)) { message (" error"); err += 1; }
-//    f_dec_key128(algd, exh);
-//    do_dec(algd, out, ret, 1);
-//    oblk("// decrypt = ", ret, 16);
-//    if(memcmp(ret, pih, 16)) { message (" error"); err += 2; }
-//#endif
-//
-//#if defined( AES_192 )
-//    memset(out, 0xcc, 16); memset(ret, 0xcc, 16);
-//    printf("\n\n// lengths:  block = 16, bytes, key = 24 bytes");
-//    f_enc_key192(alge, exh);
-//    oblk("// key     = ", exh, 24);
-//    oblk("// input   = ", pih, 16);
-//    do_enc(alge, pih, out, 1);
-//    oblk("// encrypt = ", out, 16);
-//    if(memcmp(out, res[1], 16))  { message (" error"); err += 4; }
-//    f_dec_key192(algd, exh);
-//    do_dec(algd, out, ret, 1);
-//    oblk("// decrypt = ", ret, 16);
-//    if(memcmp(ret, pih, 16))  { message (" error"); err += 8; }
-//#endif
-//
-//#if defined( AES_256 )
-//    memset(out, 0xcc, 16); memset(ret, 0xcc, 16);
-//    printf("\n\n// lengths:  block = 16, bytes, key = 32 bytes");
-//    f_enc_key256(alge, exh);
-//    oblk("// key     = ", exh, 32);
-//    oblk("// input   = ", pih, 16);
-//    do_enc(alge, pih, out, 1);
-//    oblk("// encrypt = ", out, 16);
-//    if(memcmp(out, res[2], 16))  { message (" error"); err += 16; }
-//    f_dec_key256(algd, exh);
-//    do_dec(algd, out, ret, 1);
-//    oblk("// decrypt = ", ret, 16);
-//    if(memcmp(ret, pih, 16))  { message (" error"); err += 32; }
-//#endif
-//
-//    if(!err)
-//        message("\n\nThese values are all correct\n\n");
-//    else
-//        message("\n\nSome values are in error\n\n");
-//
-//#if defined(USE_DLL) && defined(DYNAMIC_LINK)
-//    if(h_dll) FreeLibrary(h_dll);
-//#endif
-//    return 0;
-//}
+    message("\nRun tests for the Gladman AES 196 algorithm");
+    memset(&alge, 0, sizeof(aes_encrypt_ctx));
+    memset(&algd, 0, sizeof(aes_decrypt_ctx));
+
+    memset(out, 0xcc, 16); memset(ret, 0xcc, 16);
+    printf("\n\n// lengths:  block = 16, bytes, key = 24 bytes");
+    gladman_init(key, pt, ct, 24);
+    f_enc_key192(alge, exh);
+    oblk("// key     = ", exh, 24);
+    oblk("// input   = ", pih, 16);
+    do_enc(alge, pih, out, 1);
+    oblk("// encrypt = ", out, 16);
+    if(memcmp(out, res, 16))  { message (" error"); err += 4; }
+    f_dec_key192(algd, exh);
+    do_dec(algd, out, ret, 1);
+    oblk("// decrypt = ", ret, 16);
+    if(memcmp(ret, pih, 16))  { message (" error"); err += 8; }
+
+    return 0;
+}
+#endif
+
+#if defined( AES_256 )
+int aes_gladman_256(unsigned char *key, unsigned char *pt, unsigned char *ct) {
+    unsigned char   out[32] , ret[32], err = 0;
+    f_ectx          alge[1];
+    f_dctx          algd[1];
+
+    message("\nRun tests for the Gladman AES 256 algorithm");
+    memset(&alge, 0, sizeof(aes_encrypt_ctx));
+    memset(&algd, 0, sizeof(aes_decrypt_ctx));
+    printf("\n\n// lengths:  block = 16, bytes, key = 32 bytes");
+    gladman_init(key, pt, ct, 32);
+    f_enc_key256(alge, exh);
+    oblk("// key     = ", exh, 32);
+    oblk("// input   = ", pih, 16);
+    do_enc(alge, pih, out, 1);
+    oblk("// encrypt = ", out, 16);
+    if(memcmp(out, res, 16))  { message (" error"); err += 16; }
+    f_dec_key256(algd, exh);
+    do_dec(algd, out, ret, 1);
+    oblk("// decrypt = ", ret, 16);
+    if(memcmp(ret, pih, 16))  { message (" error"); err += 32; }
+
+    return 0;
+}
+#endif

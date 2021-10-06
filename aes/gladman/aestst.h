@@ -275,8 +275,8 @@ typedef struct  // initialised with subroutine addresses when the DLL is loaded
 #endif
 
 int aes_gladman_128(unsigned char *key, unsigned char *pt, unsigned char *ct);
-//int aes_gladman_192(uint8_t key, uint8_t pt, uint8_t ct);
-//int aes_gladman_256(uint8_t key, uint8_t pt, uint8_t ct);
+int aes_gladman_192(unsigned char *key, unsigned char *pt, unsigned char *ct);
+int aes_gladman_256(unsigned char *key, unsigned char *pt, unsigned char *ct);
 void message(const char *s);
 void oblk(char m[], unsigned char v[], unsigned long n);
 
