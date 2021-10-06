@@ -18,6 +18,7 @@ Algorithm  | key size
 ------------- | -------------
 AES  | 128 bit / 192 bit / 256 bit
 SHA  | 256 bit
+ECC  | 
 
 ## Getting Started
 
