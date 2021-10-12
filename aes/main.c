@@ -7,12 +7,14 @@
 #define msp432p401r
 #define riscv
 
-/** key size should be chosen in config.h **/
-// Eliminate config.h dependency
+/** need to define key size **/
+#define AES_128 1
+//#define AES_192 1
+//#define AES_256 1
+
 
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
 #include <stdint.h>
-#include "config.h"
 
 #ifdef gladman_aes
 #include "gladman/aestst.h"

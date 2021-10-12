@@ -25,7 +25,6 @@ Issue Date: 02/09/2018
 #define _AES_H
 
 #include <stdlib.h>
-#include "../config.h"
 
 /*  This include is used to find 8 & 32 bit unsigned integer types   */
 #include "brg_types.h"

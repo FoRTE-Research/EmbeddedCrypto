@@ -49,7 +49,6 @@
 #include <string.h>
 #include "aes.h"
 #include "aestst.h"
-#include "../config.h"
 
 void oblk(char m[], unsigned char v[], unsigned long n)
 {   unsigned long i;
