@@ -5,16 +5,16 @@
 
 /** need to uncomment if the board you are using is MSP432P401R **/
 #define msp432p401r
-#define riscv
+//#define riscv
 
 /** need to define key size **/
 #define AES_128 1
 //#define AES_192 1
 //#define AES_256 1
 
-
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
 #include <stdint.h>
+#include <string.h>
 
 #ifdef gladman_aes
 #include "gladman/aestst.h"
@@ -41,35 +41,49 @@ uint8_t key[] = { 0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73,
 uint8_t ct[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c, 0x06, 0x4b,
                  0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8 };
 uint8_t pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d,
-                     0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
+                 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
 
+// GLADMAN NEEDS A LOT OF FIX
 #if defined( gladman_aes )
 #ifdef AES_128
 // defines for init and decrypt as well
-#define test_encrypt(key, pt, ct) aes_gladman_128(key, pt, ct); // Do for all
-#endif
-#ifdef AES_192
-#define test_encrypt(a, b, c) aes_gladman_192(a, b, c);
-#endif
-#ifdef AES_256
-#define test_encrypt(a, b, c) aes_gladman_256(a, b, c);
+#define test_encrypt(key, pt, ct) aes_gladman_128(key, pt, ct);
+#define test_decrypt(key, pt, ct) aes_d_gladman_128(key, pt, ct);
+#elif AES_192
+#define test_encrypt(key, pt, ct) aes_gladman_192(key, pt, ct);
+#else AES_256
+#define test_encrypt(key, pt, ct) aes_gladman_256(key, pt, ct);
 #endif
 #endif
 
 #if defined( tiny_aes )
-#define test_encrypt(a, b, c) test_AES_encrypt(a, b, c);
+#define test_encrypt(key, pt) AES_encrypt(key, pt);
+#define test_decrypt(key, ct) AES_decrypt(key, ct);
 #endif
 
-#if defined( mbedtls-aes )
-#define test_encrypt(a, b, c) mbedtls_internal_aes_encrypt( mbedtls_aes_context *ctx, const unsigned char input[16], unsigned char output[16] )
+#if defined( mbedtls_aes )
+//#define test_encrypt(a, b, c) mbedtls_internal_aes_encrypt( mbedtls_aes_context *ctx, const unsigned char input[16], unsigned char output[16] )
 #endif
 
 int main(void)
 {
+    // STILL TO DO FOR ZEEZOO
     // init_aes()
     // encrypt() or decrypt() possibly many times
-    // check_result()
-    test_encrypt(key, pt, ct)
-      // You should verify the returned ct to make sure everything is working
-    return 0;
+
+
+    // Choose the function to be called
+    // test_encrypt(key, pt);
+    test_decrypt(key, ct);
+
+
+    // Check the result to see whether AES algorithm is correctly working or not
+    if (0 == memcmp((char*) ct, (char*) pt, 16))
+    {
+        return 0; // Successful
+    }
+    else
+    {
+        return 1; // Failure
+    }
 }
