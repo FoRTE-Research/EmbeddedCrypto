@@ -1,6 +1,6 @@
 /** need to choose which AES implementation to run **/
-#define gladman_aes
-//#define tiny_aes
+//#define gladman_aes
+#define tiny_aes
 //#define mbedtls_aes
 
 /** need to uncomment if the board you are using is MSP432P401R **/
