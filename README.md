@@ -23,7 +23,7 @@ ECC  |
 ## Curve Support
 
 SEC Group | Type | strength
-------------- | -------------
+------------- | ------------- | -------------
 sect163k1  | GF(2^m) | 80 bit
 sect163r2  | GF(2^m) | 80 bit
 sect233k1  | GF(2^m) | 112 bit
