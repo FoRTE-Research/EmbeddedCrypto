@@ -52,7 +52,7 @@
 
 void oblk(char m[], unsigned char v[], unsigned long n)
 {   unsigned long i;
-    
+
     printf("\n%s", m);
 
     for(i = 0; i < n; ++i)
@@ -82,82 +82,80 @@ void gladman_init(uint8_t *key, uint8_t *pt, uint8_t* ct, long n) {
     }
 }
 
-#if defined( AES_128 )
-int aes_gladman_128(unsigned char *key, unsigned char *pt, unsigned char *ct) {
+#if defined ( AES_128 )
+int aes_gladman_128_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
     unsigned char   out[32] , ret[32], err = 0;
     f_ectx          alge[1];
-    f_dctx          algd[1];
-
-    message("\nRun tests for the Gladman AES 128 algorithm");
 
     memset(&alge, 0, sizeof(aes_encrypt_ctx));
-    memset(&algd, 0, sizeof(aes_decrypt_ctx));
-    printf("\n\n// lengths:  block = 16, bytes, key = 16 bytes");
     gladman_init(key, pt, ct, 16);
     f_enc_key128(alge, exh);
-    oblk("// key     = ", exh, 16);
-    oblk("// input   = ", pih, 16);
     do_enc(alge, pih, out, 1);
-    oblk("// encrypt = ", out, 16);
-    if(memcmp(out, res, 16)) { message (" error"); err += 1; }
+    return 0;
+}
+
+int aes_gladman_128_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
+    unsigned char   out[32] , ret[32], err = 0;
+    f_dctx          algd[1];
+
+    memset(&algd, 0, sizeof(aes_decrypt_ctx));
+    gladman_init(key, pt, ct, 16);
     f_dec_key128(algd, exh);
     do_dec(algd, out, ret, 1);
-    oblk("// decrypt = ", ret, 16);
-    if(memcmp(ret, pih, 16)) { message (" error"); err += 2; }
     return 0;
-
 }
 #endif
 
 #if defined( AES_192 )
-int aes_gladman_192(unsigned char *key, unsigned char *pt, unsigned char *ct) {
+int aes_gladman_192_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
     unsigned char   out[32] , ret[32], err = 0;
     f_ectx          alge[1];
-    f_dctx          algd[1];
 
-    message("\nRun tests for the Gladman AES 196 algorithm");
     memset(&alge, 0, sizeof(aes_encrypt_ctx));
-    memset(&algd, 0, sizeof(aes_decrypt_ctx));
-
-    memset(out, 0xcc, 16); memset(ret, 0xcc, 16);
-    printf("\n\n// lengths:  block = 16, bytes, key = 24 bytes");
+    memset(out, 0xcc, 16);
+    memset(ret, 0xcc, 16);
     gladman_init(key, pt, ct, 24);
     f_enc_key192(alge, exh);
-    oblk("// key     = ", exh, 24);
-    oblk("// input   = ", pih, 16);
     do_enc(alge, pih, out, 1);
-    oblk("// encrypt = ", out, 16);
-    if(memcmp(out, res, 16))  { message (" error"); err += 4; }
+
+    return 0;
+}
+
+int aes_gladman_192_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
+    unsigned char   out[32] , ret[32], err = 0;
+    f_dctx          algd[1];
+
+    memset(&algd, 0, sizeof(aes_decrypt_ctx));
+    memset(out, 0xcc, 16); memset(ret, 0xcc, 16);
+    gladman_init(key, pt, ct, 24);
     f_dec_key192(algd, exh);
     do_dec(algd, out, ret, 1);
-    oblk("// decrypt = ", ret, 16);
-    if(memcmp(ret, pih, 16))  { message (" error"); err += 8; }
 
     return 0;
 }
 #endif
 
 #if defined( AES_256 )
-int aes_gladman_256(unsigned char *key, unsigned char *pt, unsigned char *ct) {
+int aes_gladman_256_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
     unsigned char   out[32] , ret[32], err = 0;
     f_ectx          alge[1];
-    f_dctx          algd[1];
 
-    message("\nRun tests for the Gladman AES 256 algorithm");
     memset(&alge, 0, sizeof(aes_encrypt_ctx));
-    memset(&algd, 0, sizeof(aes_decrypt_ctx));
-    printf("\n\n// lengths:  block = 16, bytes, key = 32 bytes");
     gladman_init(key, pt, ct, 32);
     f_enc_key256(alge, exh);
-    oblk("// key     = ", exh, 32);
-    oblk("// input   = ", pih, 16);
     do_enc(alge, pih, out, 1);
-    oblk("// encrypt = ", out, 16);
-    if(memcmp(out, res, 16))  { message (" error"); err += 16; }
+
+    return 0;
+}
+
+int aes_gladman_256_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
+    unsigned char   out[32] , ret[32], err = 0;
+    f_dctx          algd[1];
+
+    memset(&algd, 0, sizeof(aes_decrypt_ctx));
+    gladman_init(key, pt, ct, 32);
     f_dec_key256(algd, exh);
     do_dec(algd, out, ret, 1);
-    oblk("// decrypt = ", ret, 16);
-    if(memcmp(ret, pih, 16))  { message (" error"); err += 32; }
 
     return 0;
 }
