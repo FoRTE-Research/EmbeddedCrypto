@@ -94,7 +94,7 @@ typedef struct  // initialised with subroutine addresses when the DLL is loaded
     g_dec_keyv  *fn_dec_key;
     g_dec_blk   *fn_dec_blk;
 
-	g_talign	*fn_test_align;
+    g_talign    *fn_test_align;
     g_reset     *fn_mode_reset;
     g_enc1      *fn_ecb_enc;
     g_dec1      *fn_ecb_dec;
@@ -123,7 +123,7 @@ typedef struct  // initialised with subroutine addresses when the DLL is loaded
 #define f_dec_key(a,b,c)        (fn.fn_dec_key)((b),(c),(a))
 #define f_dec_blk(a,b,c)        (fn.fn_dec_blk)((b),(c),(a))
 
-#define f_talign(a,b)			(fn.fn_test_align)((b))
+#define f_talign(a,b)           (fn.fn_test_align)((b))
 #define f_mode_reset(a)         (fn.fn_mode_reset)((a))
 #define f_ecb_enc(a,b,c,d)      (fn.fn_ecb_enc)((b),(c),(d),(a))
 #define f_ecb_dec(a,b,c,d)      (fn.fn_ecb_dec)((b),(c),(d),(a))
@@ -203,7 +203,7 @@ typedef struct  // initialised with subroutine addresses when the DLL is loaded
 #define f_dec_key(a,b,c)        (a)->key((b),(c))
 #define f_dec_blk(a,b,c)        (a)->decrypt((b),(c))
 
-#define f_talign(a,b)			(a)->fn_test_align(b)
+#define f_talign(a,b)           (a)->fn_test_align(b)
 #define f_mode_reset(a)         (a)->mode_reset()
 #define f_ecb_enc(a,b,c,d)      (a)->ecb_encrypt((b),(c),(d))
 #define f_ecb_dec(a,b,c,d)      (a)->ecb_decrypt((b),(c),(d))
@@ -231,7 +231,7 @@ typedef struct  // initialised with subroutine addresses when the DLL is loaded
 #define f_dec_key(a,b,c)        aes_decrypt_key((b),(c),(a))
 #define f_dec_blk(a,b,c)        aes_decrypt((b),(c),(a))
 
-#define f_talign(a,b)			aes_test_alignment_detection(b)
+#define f_talign(a,b)           aes_test_alignment_detection(b)
 #define f_mode_reset(a)         aes_mode_reset(a)
 #define f_ecb_enc(a,b,c,d)      aes_ecb_encrypt((b),(c),(d),(a))
 #define f_ecb_dec(a,b,c,d)      aes_ecb_decrypt((b),(c),(d),(a))
@@ -274,10 +274,11 @@ typedef struct  // initialised with subroutine addresses when the DLL is loaded
 #define do_dec(a,b,c,d) f_ecb_dec(a, b, c, 1)
 #endif
 
-int aes_gladman_128(unsigned char *key, unsigned char *pt, unsigned char *ct);
-int aes_gladman_192(unsigned char *key, unsigned char *pt, unsigned char *ct);
-int aes_gladman_256(unsigned char *key, unsigned char *pt, unsigned char *ct);
-void message(const char *s);
-void oblk(char m[], unsigned char v[], unsigned long n);
+int aes_gladman_128_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
+int aes_gladman_128_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
+int aes_gladman_192_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
+int aes_gladman_192_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
+int aes_gladman_256_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
+int aes_gladman_256_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
 
 #endif
