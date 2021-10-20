@@ -50,17 +50,6 @@
 #include "aes.h"
 #include "aestst.h"
 
-void oblk(char m[], unsigned char v[], unsigned long n)
-{   unsigned long i;
-
-    printf("\n%s", m);
-
-    for(i = 0; i < n; ++i)
-        printf("%02x", v[i]);
-}
-
-void message(const char *s)   { printf("%s", s); }
-
 unsigned char pih[32];
 unsigned char exh[32];
 unsigned char res[32];
@@ -82,7 +71,6 @@ void gladman_init(uint8_t *key, uint8_t *pt, uint8_t* ct, long n) {
     }
 }
 
-#if defined ( AES_128 )
 int aes_gladman_128_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
     unsigned char   out[32] , ret[32], err = 0;
     f_ectx          alge[1];
@@ -104,9 +92,7 @@ int aes_gladman_128_decrypt(unsigned char *key, unsigned char *pt, unsigned char
     do_dec(algd, out, ret, 1);
     return 0;
 }
-#endif
 
-#if defined( AES_192 )
 int aes_gladman_192_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
     unsigned char   out[32] , ret[32], err = 0;
     f_ectx          alge[1];
@@ -133,9 +119,7 @@ int aes_gladman_192_decrypt(unsigned char *key, unsigned char *pt, unsigned char
 
     return 0;
 }
-#endif
 
-#if defined( AES_256 )
 int aes_gladman_256_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
     unsigned char   out[32] , ret[32], err = 0;
     f_ectx          alge[1];
@@ -159,4 +143,3 @@ int aes_gladman_256_decrypt(unsigned char *key, unsigned char *pt, unsigned char
 
     return 0;
 }
-#endif
