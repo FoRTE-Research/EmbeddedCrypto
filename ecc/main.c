@@ -43,11 +43,6 @@ void init_ecc() {
     }
     ecdh_generate_keys(pub_a, prv_a);
 
-    for (i = 0; i < ECC_PRV_SIZE; ++i)
-    {
-        prv_b[i] = prng_next();
-    }
-    ecdh_generate_keys(pub_b, prv_b);
 #elif defined(BSD)
     #if uECC_SUPPORTS_secp160r1
         prv_a = {0x00 ,0x33 ,0x05 ,0xFA ,0xD2 ,0x12 ,0xCE ,0x9D ,0xC4 ,0xF1 ,0x6A ,0x43 ,0xE3 ,0xBD ,0x20 ,0x2E ,0x94 ,0x99 ,0xBE ,0x4D ,0xC2 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00};
@@ -81,7 +76,6 @@ void init_ecc() {
 void generate_share_secret(){
 #if defined(TINY_ECC)
     ecdh_shared_secret(prv_a, pub_b, sec_a);
-    ecdh_shared_secret(prv_b, pub_a, sec_b);
 #elif defined(BSD)
     #if uECC_SUPPORTS_secp160r1
         curves = uECC_secp160r1();
@@ -104,15 +98,26 @@ void generate_share_secret(){
         return;
     }
 
-    if (!uECC_shared_secret(pub_a, prv_b, sec_b, curves)) {
-        printf("shared_secret() failed (2)\n");
-        return;
-    }
 #endif
 }
 
 void check_result() {
 
+#if defined(TINY_ECC)
+
+    for (i = 0; i < ECC_PRV_SIZE; ++i)
+    {
+        prv_b[i] = prng_next();
+    }
+    ecdh_generate_keys(pub_b, prv_b);
+    
+    ecdh_shared_secret(prv_b, pub_a, sec_b);
+#elif defined(BSD)
+    if (!uECC_shared_secret(pub_a, prv_b, sec_b, curves)) {
+        printf("shared_secret() failed (2)\n");
+        return;
+    }
+#endif
     for (i = 0; i < ECC_PUB_SIZE; ++i)
     {
         assert(sec_a[i] == sec_b[i]);
