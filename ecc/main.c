@@ -1,7 +1,8 @@
-//#define BSD
-#define TINY_ECC
+#define BSD
+//#define TINY_ECC
 
 #include <assert.h>
+#include <stdio.h>
 
 #if defined(TINY_ECC)
     #include "tiny_ecc/ecdh.h"
@@ -100,19 +101,19 @@ void generate_share_secret(){
 
     if (!uECC_shared_secret(pub_b, prv_a, sec_a, curves)) {
         printf("shared_secret() failed (1)\n");
-        return 1;
+        return;
     }
 
     if (!uECC_shared_secret(pub_a, prv_b, sec_b, curves)) {
         printf("shared_secret() failed (2)\n");
-        return 1;
+        return;
     }
 #endif
 }
 
 void check_result() {
 
-    for (i = 0; i < ECC_PUB_KEY_SIZE; ++i)
+    for (i = 0; i < ECC_PUB_SIZE; ++i)
     {
         assert(sec_a[i] == sec_b[i]);
     }
