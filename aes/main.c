@@ -8,9 +8,9 @@
 //#define riscv
 
 /** need to define key size **/
-#define AES_128 1
+//#define AES_128 1
 //#define AES_192 1
-//#define AES_256 1
+#define AES_256 1
 
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
 #include <stdint.h>
@@ -42,20 +42,22 @@ uint8_t ct[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c, 0x06, 0x4b,
                  0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8 };
 uint8_t pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d,
                  0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
+#ifdef tiny_aes
 struct AES_ctx ctx;
-
-#ifdef AES_128
-#define keysize = 128;
-#elif AES_192
-#define keysize = 192;
-#elif AES_256
-#define keysize = 256;
 #endif
 
-// GLADMAN NEEDS A LOT OF FIX
+#ifdef AES_128
+keysize = 128;
+#elif AES_192
+keysize = 192;
+#else
+keysize = 256;
+#endif
+
+
 // defines for init and decrypt as well
 #if defined( gladman_aes )
-#define init_aes(key, pt, ct, keysize) gladman_init(key, pt, ct, keysize);
+#define init_aes(key, pt, ct, keysize) gladman_init(key, pt, ct, keysize); // Initialize gladman AES
 #ifdef AES_128
 #define test_encrypt(key, pt, ct) aes_gladman_128_encrypt(key, pt, ct);
 #define test_decrypt(key, pt, ct) aes_gladman_128_decrypt(key, pt, ct);
@@ -70,8 +72,7 @@ struct AES_ctx ctx;
 
 
 #if defined( tiny_aes )
-//#define tiny_aes_init(ctx, key) AES_init_ctx(ctx, key);
-#define init_aes(ctx, key) AES_init_ctx(ctx, key);
+#define init_aes(ctx, key) AES_init_ctx(ctx, key); // Initialize tiny AES
 #define test_encrypt(ctx, key, pt, ct) AES_encrypt(ctx, key, pt, ct);
 #define test_decrypt(ctx, key, ct, pt) AES_decrypt(ctx, key, ct, pt);
 #endif
@@ -81,19 +82,21 @@ struct AES_ctx ctx;
 //#define test_encrypt(a, b, c) mbedtls_internal_aes_encrypt( mbedtls_aes_context *ctx, const unsigned char input[16], unsigned char output[16] )
 #endif
 
+
 int main(void)
 {
-    // initialize AES
+    /** initialize AES **/
     init_aes(&ctx, key); // initialize for tiny AES
-    init_aes(key, pt, ct, keysize); // initialize for gladman AES
+    // init_aes(key, pt, ct, keysize); // initialize for gladman AES
 
-    // encrypt() or decrypt() possibly many times
+    /** Choose the function to be called **/
+    /** Encrypt or decrypt possibly many times **/
+    test_encrypt(&ctx, key, pt, ct); // tiny AES Encrypt
+    // test_decrypt(&ctx, key, ct, pt); // tiny AES Decrypt
+    // test_encrypt(key, pt, ct); // Gladman AES Encrypt
+    // test_decrypt(key, ct, pt); // Gladman AES Decrypt
 
-    // Choose the function to be called
-    // test_encrypt(&ctx, key, pt, ct);
-    // test_decrypt(&ctx, key, ct, pt);
-
-    // Check the result to see whether AES algorithm is correctly working or not
+    /** Check the result to see whether AES algorithm is correctly working or not **/
     if (0 == memcmp((char*) ct, (char*) pt, 16))
     {
         return 0; // Success
