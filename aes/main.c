@@ -49,6 +49,16 @@ struct AES_ctx ctx;
 struct mbedtls_aes_context ctx;
 #endif
 
+/** Call initialization functions for different AES implementations **/
+void init_aes() {
+#ifdef gladman_aes
+    gladman_init(key, pt, ct, keysize);
+#endif
+#ifdef tiny_aes
+    AES_init_ctx(&ctx, key);
+#endif
+}
+
 #if defined AES_128
 long keysize = 128;
 #elif defined AES_192
@@ -57,7 +67,7 @@ long keysize = 192;
 long keysize = 256;
 #endif
 
-// defines for init and decrypt as well
+/** Gladman AES **/
 #ifdef gladman_aes
 #ifdef AES_128
 #define test_encrypt(key, pt, ct) aes_gladman_128_encrypt(key, pt, ct);
@@ -71,21 +81,13 @@ long keysize = 256;
 #endif
 #endif
 
-void init_aes() {
-#ifdef gladman_aes
-    gladman_init(key, pt, ct, keysize);
-#endif
-#ifdef tiny_aes
-    AES_init_ctx(&ctx, key);
-#endif
-}
-
+/** tiny AES **/
 #ifdef tiny_aes
 #define test_encrypt(ctx, key, pt, ct) AES_encrypt(ctx, key, pt, ct);
 #define test_decrypt(ctx, key, ct, pt) AES_decrypt(ctx, key, ct, pt);
 #endif
 
-
+/** MbedTLS AES **/
 #ifdef mbedtls_aes
 #define test_encrypt(ctx, pt, ct) mbedtls_internal_aes_encrypt(ctx, pt, ct);
 #endif
@@ -105,7 +107,6 @@ int main(void)
     // test_decrypt(&ctx, key, ct, pt); // tiny AES Decrypt
 
     //test_encrypt(&ctx, (const unsigned char) pt, (unsigned char) ct); // mbedtls AES Encrypt
-
 
     /** Check the result to see whether AES algorithm is correctly working or not **/
     if (0 == memcmp((char*) ct, (char*) pt, 16))
