@@ -1,14 +1,14 @@
 /** need to choose which AES implementation to run **/
 //#define gladman_aes
 //#define tiny_aes
-//#define mbedtls_aes
+#define mbedtls_aes
 
 /** need to uncomment if the board you are using is MSP432P401R **/
-//#define msp432p401r
+#define msp432p401r
 //#define riscv
 
 /** need to define key size **/
-//#define AES_128 1
+#define AES_128 1
 //#define AES_192 1
 //#define AES_256 1
 
@@ -45,8 +45,18 @@ uint8_t pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d,
 /** contexts **/
 #ifdef tiny_aes
 struct AES_ctx ctx;
-#elif defined mbedtls_aes
+#endif
+#ifdef mbedtls_aes
 struct mbedtls_aes_context ctx;
+#endif
+
+/** define keysizes **/
+#if defined AES_128
+long keysize = 128;
+#elif defined AES_192
+long keysize = 192;
+#else
+long keysize = 256;
 #endif
 
 /** Call initialization functions for different AES implementations **/
@@ -57,40 +67,57 @@ void init_aes() {
 #ifdef tiny_aes
     AES_init_ctx(&ctx, key);
 #endif
+#ifdef mbedtls_aes
+    mbedtls_aes_init(&ctx);
+    mbedtls_aes_setkey_enc(&ctx, key, keysize);
+#endif
 }
 
-#if defined AES_128
-long keysize = 128;
-#elif defined AES_192
-long keysize = 192;
-#else
-long keysize = 256;
-#endif
+void test_encrypt() {
+    /** Gladman AES **/
+    #ifdef gladman_aes
+    #ifdef AES_128
+    aes_gladman_128_encrypt(key, pt, ct);
+    #elif AES_192
+    aes_gladman_192_encrypt(key, pt, ct);
+    #else // AES_256
+    aes_gladman_256_encrypt(key, pt, ct);
+    #endif
+    #endif
 
-/** Gladman AES **/
-#ifdef gladman_aes
-#ifdef AES_128
-#define test_encrypt(key, pt, ct) aes_gladman_128_encrypt(key, pt, ct);
-#define test_decrypt(key, pt, ct) aes_gladman_128_decrypt(key, pt, ct);
-#elif AES_192
-#define test_encrypt(key, pt, ct) aes_gladman_192_encrypt(key, pt, ct);
-#define test_decrypt(key, pt, ct) aes_gladman_192_decrypt(key, pt, ct);
-#else // AES_256
-#define test_encrypt(key, pt, ct) aes_gladman_256_encrypt(key, pt, ct);
-#define test_decrypt(key, pt, ct) aes_gladman_256_decrypt(key, pt, ct);
-#endif
-#endif
+    /** tiny AES **/
+    #ifdef tiny_aes
+    AES_encrypt(&ctx, key, pt, ct);
+    #endif
 
-/** tiny AES **/
-#ifdef tiny_aes
-#define test_encrypt(ctx, key, pt, ct) AES_encrypt(ctx, key, pt, ct);
-#define test_decrypt(ctx, key, ct, pt) AES_decrypt(ctx, key, ct, pt);
-#endif
+    /** MbedTLS AES **/
+    #ifdef mbedtls_aes
+    mbedtls_internal_aes_encrypt(&ctx, pt, ct);
+    #endif
+}
 
-/** MbedTLS AES **/
-#ifdef mbedtls_aes
-#define test_encrypt(ctx, pt, ct) mbedtls_internal_aes_encrypt(ctx, pt, ct);
-#endif
+void test_decrypt() {
+    /** Gladman AES **/
+    #ifdef gladman_aes
+    #ifdef AES_128
+    aes_gladman_128_decrypt(key, ct, pt);
+    #elif AES_192
+    aes_gladman_192_decrypt(key, ct, pt);
+    #else // AES_256
+    aes_gladman_256_decrypt(key, ct, pt);
+    #endif
+    #endif
+
+    /** tiny AES **/
+    #ifdef tiny_aes
+    AES_decrypt(&ctx, key, ct, pt);
+    #endif
+
+    /** MbedTLS AES **/
+    #ifdef mbedtls_aes
+    mbedtls_internal_aes_decrypt(&ctx, pt, ct);
+    #endif
+}
 
 int main(void)
 {
@@ -99,14 +126,8 @@ int main(void)
 
     /** Choose the function to be called **/
     /** Encrypt or decrypt possibly many times **/
-
-    // test_encrypt(key, pt, ct); // Gladman AES Encrypt
-    // test_decrypt(key, ct, pt); // Gladman AES Decrypt
-
-    test_encrypt(&ctx, key, pt, ct); // tiny AES Encrypt
-    // test_decrypt(&ctx, key, ct, pt); // tiny AES Decrypt
-
-    //test_encrypt(&ctx, (const unsigned char) pt, (unsigned char) ct); // mbedtls AES Encrypt
+    test_encrypt();
+    // test_decrypt();
 
     /** Check the result to see whether AES algorithm is correctly working or not **/
     if (0 == memcmp((char*) ct, (char*) pt, 16))
