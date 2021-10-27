@@ -42,6 +42,12 @@ void init_ecc() {
     {
         prv_a[i] = prng_next();
     }
+
+    for (i = 0; i < ECC_PRV_SIZE; ++i)
+    {
+        prv_b[i] = prng_next();
+    }
+    ecdh_generate_keys(pub_b, prv_b);
     ecdh_generate_keys(pub_a, prv_a);
 
 #elif defined(BSD)
@@ -114,13 +120,6 @@ void generate_share_secret(){
 void check_result() {
 
 #if defined(TINY_ECC)
-
-    for (i = 0; i < ECC_PRV_SIZE; ++i)
-    {
-        prv_b[i] = prng_next();
-    }
-    ecdh_generate_keys(pub_b, prv_b);
-    
     ecdh_shared_secret(prv_b, pub_a, sec_b);
 #elif defined(BSD)
     if (!uECC_shared_secret(pub_a, prv_b, sec_b, curves)) {
