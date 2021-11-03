@@ -37,9 +37,6 @@
  *   cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0
  */
 
-#include "msp.h"
-#define SHA256_TEST
-
 #ifdef HAVE_CONFIG_H
 #include "clamav-config.h"
 #endif /* HAVE_CONFIG_H */
@@ -426,58 +423,54 @@ sha256_final (SHA256_CTX *sc, uint8_t hash[SHA256_HASH_SIZE])
   }
 }
 
-#ifdef SHA256_TEST
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-int
-main (int argc, char *argv[])
-{
-  SHA256_CTX foo;
-  uint8_t hash[SHA256_HASH_SIZE];
-  char buf[1000];
-  int i;
-
-  sha256_init (&foo);
-  sha256_update (&foo, "abc", 3);
-  sha256_final (&foo, hash);
-
-  for (i = 0; i < SHA256_HASH_SIZE;) {
-    printf ("%02x", hash[i++]);
-    if (!(i % 4))
-      printf (" ");
-  }
-  printf ("\n");
-
-  sha256_init (&foo);
-  sha256_update (&foo,
-        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
-        56);
-  sha256_final (&foo, hash);
-
-  for (i = 0; i < SHA256_HASH_SIZE;) {
-    printf ("%02x", hash[i++]);
-    if (!(i % 4))
-      printf (" ");
-  }
-  printf ("\n");
-
-  sha256_init (&foo);
-  memset (buf, 'a', sizeof (buf));
-  for (i = 0; i < 1000; i++)
-    sha256_update (&foo, buf, sizeof (buf));
-  sha256_final (&foo, hash);
-
-  for (i = 0; i < SHA256_HASH_SIZE;) {
-    printf ("%02x", hash[i++]);
-    if (!(i % 4))
-      printf (" ");
-  }
-  printf ("\n");
-
-  exit (0);
-}
-
-#endif /* SHA256_TEST */
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//int
+//main (int argc, char *argv[])
+//{
+//  SHA256_CTX foo;
+//  uint8_t hash[SHA256_HASH_SIZE];
+//  char buf[1000];
+//  int i;
+//
+//  sha256_init (&foo);
+//  sha256_update (&foo, "abc", 3);
+//  sha256_final (&foo, hash);
+//
+//  for (i = 0; i < SHA256_HASH_SIZE;) {
+//    printf ("%02x", hash[i++]);
+//    if (!(i % 4))
+//      printf (" ");
+//  }
+//  printf ("\n");
+//
+//  sha256_init (&foo);
+//  sha256_update (&foo,
+//        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+//        56);
+//  sha256_final (&foo, hash);
+//
+//  for (i = 0; i < SHA256_HASH_SIZE;) {
+//    printf ("%02x", hash[i++]);
+//    if (!(i % 4))
+//      printf (" ");
+//  }
+//  printf ("\n");
+//
+//  sha256_init (&foo);
+//  memset (buf, 'a', sizeof (buf));
+//  for (i = 0; i < 1000; i++)
+//    sha256_update (&foo, buf, sizeof (buf));
+//  sha256_final (&foo, hash);
+//
+//  for (i = 0; i < SHA256_HASH_SIZE;) {
+//    printf ("%02x", hash[i++]);
+//    if (!(i % 4))
+//      printf (" ");
+//  }
+//  printf ("\n");
+//
+//  exit (0);
+//}
