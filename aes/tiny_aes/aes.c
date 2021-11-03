@@ -44,6 +44,7 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 /*****************************************************************************/
 // The number of columns comprising a state in AES. This is a constant in AES. Value=4
 #define Nb 4
+#define AES_128 1
 
 #if defined(AES_256) && (AES_256 == 1)
     #define Nk 8
@@ -51,7 +52,7 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 #elif defined(AES_192) && (AES_192 == 1)
     #define Nk 6
     #define Nr 12
-#else
+#elif defined(AES_128) && (AES_128 == 1)
     #define Nk 4        // The number of 32 bit words in a key.
     #define Nr 10       // The number of rounds in AES Cipher.
 #endif
@@ -439,24 +440,15 @@ static void InvCipher(state_t* state, const uint8_t* RoundKey)
 /* Public functions:                                                         */
 /*****************************************************************************/
 
-void AES_encrypt(uint8_t key[], uint8_t in[])
+void AES_encrypt(struct AES_ctx* ctx, uint8_t key[], uint8_t in[], uint8_t out[])
 {
-    struct AES_ctx ctx;
-    AES_init_ctx(&ctx, key);
-
-    const struct AES_ctx* cctx = &ctx;
-
     // The next function call encrypts the PlainText with the Key using AES algorithm.
-    Cipher((state_t*)in, cctx->RoundKey);
+    Cipher((state_t*)in, ctx->RoundKey);
 }
 
-void AES_decrypt(uint8_t key[], uint8_t out[])
+int * AES_decrypt(struct AES_ctx* ctx, uint8_t key[], uint8_t out[], uint8_t in[])
 {
-    struct AES_ctx ctx;
-    AES_init_ctx(&ctx, key);
-
-    const struct AES_ctx* cctx = &ctx;
-
     // The next function call decrypts the PlainText with the Key using AES algorithm.
-    InvCipher((state_t*)out, cctx->RoundKey);
+    InvCipher((state_t*)out, ctx->RoundKey);
+    return *out;
 }
