@@ -1,7 +1,7 @@
 /** need to choose which AES implementation to run **/
-//#define gladman_aes
+#define gladman_aes
 //#define tiny_aes
-#define mbedtls_aes
+//#define mbedtls_aes
 
 /** need to uncomment if the board you are using is MSP432P401R **/
 #define msp432p401r
@@ -100,7 +100,7 @@ void test_decrypt() {
     /** Gladman AES **/
     #ifdef gladman_aes
     #ifdef AES_128
-    aes_gladman_128_decrypt(key, ct, pt);
+    int[] decrypted = aes_gladman_128_decrypt(key, ct, pt);
     #elif AES_192
     aes_gladman_192_decrypt(key, ct, pt);
     #else // AES_256
@@ -110,13 +110,24 @@ void test_decrypt() {
 
     /** tiny AES **/
     #ifdef tiny_aes
-    AES_decrypt(&ctx, key, ct, pt);
+    int[] decrypted = AES_decrypt(&ctx, key, ct, pt);
     #endif
 
     /** MbedTLS AES **/
     #ifdef mbedtls_aes
-    mbedtls_internal_aes_decrypt(&ctx, pt, ct);
+    int[] decrypted = mbedtls_internal_aes_decrypt(&ctx, pt, ct);
     #endif
+}
+
+int check_result() {
+    if (0 == memcmp((char*) pt, (char*) decrypted, 16))
+    {
+        return 0; // Success
+    }
+    else
+    {
+        return 1; // Failure
+    }
 }
 
 int main(void)
@@ -130,12 +141,5 @@ int main(void)
     // test_decrypt();
 
     /** Check the result to see whether AES algorithm is correctly working or not **/
-    if (0 == memcmp((char*) ct, (char*) pt, 16))
-    {
-        return 0; // Success
-    }
-    else
-    {
-        return 1; // Failure
-    }
+    check_result();
 }
