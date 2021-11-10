@@ -30,10 +30,10 @@
 
 #include <string.h>
 
-#include "mbedtls/aes.h"
-#include "mbedtls/platform.h"
-#include "mbedtls/platform_util.h"
-#include "mbedtls/error.h"
+#include "aes.h"
+#include "platform.h"
+#include "platform_util.h"
+#include "error.h"
 #if defined(MBEDTLS_PADLOCK_C)
 #include "padlock.h"
 #endif
@@ -43,7 +43,7 @@
 
 #if defined(MBEDTLS_SELF_TEST)
 #if defined(MBEDTLS_PLATFORM_C)
-#include "mbedtls/platform.h"
+#include "platform.h"
 #else
 #include <stdio.h>
 #define mbedtls_printf printf
@@ -522,8 +522,6 @@ void mbedtls_aes_free( mbedtls_aes_context *ctx )
 {
     if( ctx == NULL )
         return;
-
-    mbedtls_platform_zeroize( ctx, sizeof( mbedtls_aes_context ) );
 }
 
 #if defined(MBEDTLS_CIPHER_MODE_XTS)
@@ -916,8 +914,6 @@ int mbedtls_internal_aes_encrypt( mbedtls_aes_context *ctx,
     PUT_UINT32_LE( t.X[2], output,  8 );
     PUT_UINT32_LE( t.X[3], output, 12 );
 
-    mbedtls_platform_zeroize( &t, sizeof( t ) );
-
     return( 0 );
 }
 #endif /* !MBEDTLS_AES_ENCRYPT_ALT */
@@ -979,8 +975,6 @@ int mbedtls_internal_aes_decrypt( mbedtls_aes_context *ctx,
     PUT_UINT32_LE( t.X[1], output,  4 );
     PUT_UINT32_LE( t.X[2], output,  8 );
     PUT_UINT32_LE( t.X[3], output, 12 );
-
-    mbedtls_platform_zeroize( &t, sizeof( t ) );
 
     return( 0 );
 }

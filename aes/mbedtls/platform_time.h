@@ -22,7 +22,7 @@
 #ifndef MBEDTLS_PLATFORM_TIME_H
 #define MBEDTLS_PLATFORM_TIME_H
 
-#include "mbedtls/build_info.h"
+#include "build_info.h"
 
 #ifdef __cplusplus
 extern "C" {

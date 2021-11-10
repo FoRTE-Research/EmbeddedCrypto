@@ -22,7 +22,7 @@
 #ifndef MBEDTLS_ERROR_H
 #define MBEDTLS_ERROR_H
 
-#include "mbedtls/build_info.h"
+#include "build_info.h"
 
 #include <stddef.h>
 
