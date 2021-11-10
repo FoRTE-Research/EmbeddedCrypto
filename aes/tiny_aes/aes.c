@@ -38,13 +38,13 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 #include <string.h> // CBC mode, for memset
 #include <stdio.h>
 #include "aes.h"
+#include "test.h"
 
 /*****************************************************************************/
 /* Defines:                                                                  */
 /*****************************************************************************/
 // The number of columns comprising a state in AES. This is a constant in AES. Value=4
 #define Nb 4
-#define AES_128 1
 
 #if defined(AES_256) && (AES_256 == 1)
     #define Nk 8
