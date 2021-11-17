@@ -111,12 +111,7 @@ void test_decrypt() {
 }
 
 int check_result() {
-     if (0 == memcmp((char*) pt, (char*) check_encrypt, 16)) {
-         return 0; // Success
-     }
-     else {
-         return 1; // Failure
-     }
+     return memcmp((char*) pt, (char*) check_encrypt, 16);
  }
 
 int main(void)
