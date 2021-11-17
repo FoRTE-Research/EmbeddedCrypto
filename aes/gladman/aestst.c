@@ -56,17 +56,19 @@ unsigned char res[32];
 
 void gladman_init(uint8_t *key, uint8_t *pt, uint8_t* ct, long n) {
 
+    int i = 0;
+
     //init key
-    for(int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         exh[i] = key[i];
     }
 
     //init plain text
-    for(int i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         pih[i] = pt[i];
     }
 
-    for(int i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         res[i] = ct[i];
     }
 }
