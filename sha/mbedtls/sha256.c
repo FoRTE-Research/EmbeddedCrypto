@@ -23,7 +23,6 @@
  *
  *  http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf
  */
-#include "msp.h"
 
 #if !defined(MBEDTLS_CONFIG_FILE)
 #include "config.h"
@@ -322,11 +321,11 @@ void mbedtls_sha256_finish( mbedtls_sha256_context *ctx, unsigned char output[32
  * output = SHA-256( input buffer )
  */
 void mbedtls_sha256( const unsigned char *input, size_t ilen,
-             unsigned char output[32], int is224 )
+             unsigned char output[32], int is224, mbedtls_sha256_context ctx)
 {
-    mbedtls_sha256_context ctx;
+//    mbedtls_sha256_context ctx;
 
-    mbedtls_sha256_init( &ctx );
+//    mbedtls_sha256_init( &ctx );
     mbedtls_sha256_starts( &ctx, is224 );
     mbedtls_sha256_update( &ctx, input, ilen );
     mbedtls_sha256_finish( &ctx, output );

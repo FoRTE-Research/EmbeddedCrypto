@@ -440,10 +440,10 @@ VOID_RETURN sha256_end(unsigned char hval[], sha256_ctx ctx[1])
     sha_end1(hval, ctx, SHA256_DIGEST_SIZE);
 }
 
-VOID_RETURN sha256(unsigned char hval[], const unsigned char data[], unsigned long len)
-{   sha256_ctx  cx[1];
+VOID_RETURN sha256(unsigned char hval[], const unsigned char data[], unsigned long len, sha256_ctx cx[1])
+{   //sha256_ctx  cx[1];
 
-    sha256_begin(cx);
+    //sha256_begin(cx);
     sha256_hash(data, len, cx);
     sha_end1(hval, cx, SHA256_DIGEST_SIZE);
 }
@@ -817,10 +817,10 @@ VOID_RETURN sha512(unsigned char hval[], const unsigned char data[], unsigned lo
     sha512_end(hval, cx);
 }
 
-VOID_RETURN sha512_256(unsigned char hval[], const unsigned char data[], unsigned long len)
-{   sha512_ctx  cx[1];
-
-    sha512_256_begin(cx);
+VOID_RETURN sha512_256(unsigned char hval[], const unsigned char data[], unsigned long len, sha256_ctx cx[1])
+{//   sha512_ctx  cx[1];
+//
+//    sha512_256_begin(cx);
     sha512_256_hash(data, len, cx);
     sha512_256_end(hval, cx);
 }

@@ -125,7 +125,7 @@ extern "C" {
  * \param is224    0 = use SHA256, 1 = use SHA224
  */
 void mbedtls_sha256( const unsigned char *input, size_t ilen,
-           unsigned char output[32], int is224 );
+           unsigned char output[32], int is224, mbedtls_sha256_context ctx );
 
 /**
  * \brief          Checkup routine

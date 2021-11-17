@@ -88,7 +88,7 @@ VOID_RETURN sha224(unsigned char hval[], const unsigned char data[], unsigned lo
 VOID_RETURN sha256_begin(sha256_ctx ctx[1]);
 VOID_RETURN sha256_hash(const unsigned char data[], unsigned long len, sha256_ctx ctx[1]);
 VOID_RETURN sha256_end(unsigned char hval[], sha256_ctx ctx[1]);
-VOID_RETURN sha256(unsigned char hval[], const unsigned char data[], unsigned long len);
+VOID_RETURN sha256(unsigned char hval[], const unsigned char data[], unsigned long len, sha256_ctx cx[1]);
 
 #ifndef SHA_64BIT
 
@@ -152,7 +152,7 @@ VOID_RETURN sha512(unsigned char hval[], const unsigned char data[], unsigned lo
 VOID_RETURN sha512_256_begin(sha512_ctx ctx[1]);
 #define sha512_256_hash sha512_hash
 VOID_RETURN sha512_256_end(unsigned char hval[], sha512_ctx ctx[1]);
-VOID_RETURN sha512_256(unsigned char hval[], const unsigned char data[], unsigned long len);
+VOID_RETURN sha512_256(unsigned char hval[], const unsigned char data[], unsigned long len, sha256_ctx cx[1]);
 
 VOID_RETURN sha512_224_begin(sha512_ctx ctx[1]);
 #define sha512_224_hash sha512_hash
