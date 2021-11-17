@@ -18,10 +18,10 @@ and fitness for purpose.
 Issue Date: 25/09/2018
 */
 
-#ifndef __GNUC__
-#  include <windows.h>
-#  include <direct.h>
-#endif
+// #ifndef __GNUC__
+// #  include <windows.h>
+// #  include <direct.h>
+// #endif
 #include "aes.h"
 #include "aesaux.h"
 
