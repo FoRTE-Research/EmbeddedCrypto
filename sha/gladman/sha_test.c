@@ -20,7 +20,7 @@ Issue Date: 20/12/2007
 
 #include <stdio.h>
 #include <string.h>
-#include <memory.h>
+//#include <memory.h>
 #include <ctype.h>
 
 /* define to send output to console         */
