@@ -1,6 +1,6 @@
 /** need to choose which AES implementation to run **/
-//#define gladman_sha
-#define saddi_sha
+#define gladman_sha
+//#define saddi_sha
 //#define mbedtls_sha
 
 /** need to uncomment if the board you are using is MSP432P401R **/
@@ -32,7 +32,8 @@
 /** Globals (test inputs) **/
 unsigned char hval[32];
 unsigned char data[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnop"; // Data you want to hash
-size_t len = 56; // Length of the data
+unsigned char check_sha256[] = "aa353e009edbaebfc6e494c8d847696896cb8b398e0173a4b5c1b636292d87c7";
+size_t len = 55; // Length of the data
 
 /** contexts **/
 #ifdef gladman_sha
@@ -74,6 +75,14 @@ int test_sha256() {
 #endif
 }
 
+int check_result() {
+    if (0 == memcmp((char*) hval, (char*) check_sha256, 64)) {
+        return 0; // Success
+    } else {
+        return 1; // Failure
+    }
+}
+
 int main (int argc, char *argv[]) {
 
   /** initialize SHA **/
@@ -81,5 +90,8 @@ int main (int argc, char *argv[]) {
 
   /** test SHA-256 **/
   test_sha256();
+
+  /** Check the result to see whether AES algorithm is correctly working or not **/
+  check_result();
 
 }
