@@ -40,5 +40,27 @@
  #define ECC_CURVE NIST_B163
 #endif
 
+/* Mbedtle ECC */
+// Size of buffer used to store the public keys exchanged between the client and sever
+// Buffer size should be the following:
+// Curve    Public Key Buffer Size
+// -----    ----------------------
+// 25519    32
+// SECP384  48
+// SECP521  66
+#define BUF_BYTES 32    // Safe to use the largest buffer size
+
+#define CURVE25519 1
+#define SECP384R1 0
+#define SECP521R1 0
+
+#if CURVE25519
+#define ELLIPTIC_CURVE MBEDTLS_ECP_DP_CURVE25519
+#elif SECP384R1
+#define ELLIPTIC_CURVE MBEDTLS_ECP_DP_SECP384R1
+#elif SECP521R1
+    #define ELLIPTIC_CURVE MBEDTLS_ECP_DP_SECP521R1
+#endif
+
 
 #endif //AES_TEST_CURVE_H
