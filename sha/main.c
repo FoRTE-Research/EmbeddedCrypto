@@ -1,4 +1,4 @@
-/** need to choose which AES implementation to run **/
+/** need to choose which SHA implementation to run **/
 #define gladman_sha
 //#define saddi_sha
 //#define mbedtls_sha
