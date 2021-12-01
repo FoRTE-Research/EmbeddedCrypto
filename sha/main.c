@@ -29,11 +29,13 @@
 #include "mbedtls/sha256.h"
 #endif
 
+#define DIGEST_BYTES (256/8)
+
 /** Globals (test inputs) **/
-unsigned char hval[32];
+unsigned char hval[DIGEST_BYTES];
 unsigned char data[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnop"; // Data you want to hash
 unsigned char check_sha256[] = "aa353e009edbaebfc6e494c8d847696896cb8b398e0173a4b5c1b636292d87c7";
-size_t len = 55; // Length of the data
+size_t len = sizeof(data);
 
 /** contexts **/
 #ifdef gladman_sha
@@ -76,11 +78,7 @@ int test_sha256() {
 }
 
 int check_result() {
-    if (0 == memcmp((char*) hval, (char*) check_sha256, 64)) {
-        return 0; // Success
-    } else {
-        return 1; // Failure
-    }
+    return memcmp((char*) hval, (char*) check_sha256, DIGEST_BYTES))
 }
 
 int main (int argc, char *argv[]) {
