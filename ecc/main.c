@@ -1,6 +1,11 @@
-//#define BSD
+/** need to choose which ECC implementation to run **/
+#define BSD
 //#define TINY_ECC
-#define MBEDTLS
+//#define MBEDTLS
+
+/** need to uncomment if the board you are using is MSP432P401R **/
+#define msp432p401r
+//#define riscv
 
 #include <assert.h>
 #include <stdio.h>
@@ -13,6 +18,10 @@
 #include "bsd/uECC.h"
 #elif defined(MBEDTLS)
 #include "mbedtls/ecc_test.h"
+#endif
+
+#ifdef msp432p401r
+#include "msp.h"
 #endif
 
 #if defined(TINY_ECC)
@@ -210,7 +219,7 @@ void check_result() {
 #endif
 }
 
-int main(){
+int main(void){
 
     init_ecc();
     generate_share_secret();
