@@ -111,8 +111,8 @@ void test_decrypt() {
 }
 
 int check_result() {
-     return memcmp((char*) pt, (char*) check_encrypt, 16);
- }
+  return memcmp((char*) pt, (char*) check_encrypt, 16);
+}
 
 int main(void)
 {
