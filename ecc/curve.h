@@ -35,7 +35,7 @@
  #define ECC_CURVE NIST_B163  //change this name to switch curve  ex NIST_B163 -> NIST_B233
 #endif
 
-/* Mbedtle ECC */
+/* MbedTLS ECC */
 // Size of buffer used to store the public keys exchanged between the client and sever
 // Buffer size should be the following:
 // Curve    Public Key Buffer Size
