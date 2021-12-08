@@ -25,19 +25,14 @@
 
 /*Tiny ECC Support Curve*/
 #define NIST_B163  1
-#define NIST_K163  2
 #define NIST_B233  3
-#define NIST_K233  4
 #define NIST_B283  5
-#define NIST_K283  6
 #define NIST_B409  7
-#define NIST_K409  8
 #define NIST_B571  9
-#define NIST_K571 10
 
 /* What is the default curve to use? */
 #ifndef ECC_CURVE
- #define ECC_CURVE NIST_B163
+ #define ECC_CURVE NIST_B163  //change this name to switch curve  ex NIST_B163 -> NIST_B233
 #endif
 
 /* Mbedtle ECC */
