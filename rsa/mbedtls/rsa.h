@@ -34,10 +34,6 @@
 #include "bignum.h"
 #include "md.h"
 
-#if defined(MBEDTLS_THREADING_C)
-#include "mbedtls/threading.h"
-#endif
-
 /*
  * RSA Error codes
  */
