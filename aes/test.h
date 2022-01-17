@@ -22,4 +22,7 @@
 #define AES_192 1
 //#define AES_256 1
 
+/** can define block chaining **/
+//#define AES_CBC
+
 #endif /* AES_TEST_H_ */
