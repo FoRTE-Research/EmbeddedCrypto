@@ -32,6 +32,11 @@ uint8_t check_encrypt[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c,
                             0x06, 0x4b, 0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8 };
 uint8_t pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d,
                  0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
+
+// initialization vector for CBC mode
+unsigned char iv[16] = { 0xb2, 0x4b, 0xf2, 0xf7, 0x7a, 0xc5, 0xec, 0x0c, 0x5e,
+                         0x1f, 0x4d, 0xc1, 0xae, 0x46, 0x5e, 0x75 };
+
 /** contexts **/
 #ifdef tiny_aes
 struct AES_ctx ctx;
@@ -64,6 +69,35 @@ void init_aes()
 #endif
 }
 
+int aes_encrypt_cbc(size_t length,
+                    unsigned char iv[16], const unsigned char *input,
+                    unsigned char *output)
+{
+    int i;
+    unsigned char temp[16];
+
+    if (length % 16)
+    {
+        return (0); // In case of invalid input length
+    }
+
+    while (length > 0)
+    {
+        for (i = 0; i < 16; i++)
+            output[i] = (unsigned char) (input[i] ^ iv[i]);
+
+        // mbedtls_internal_aes_encrypt(&ctx, pt, ct);
+        test_encrypt();
+        memcpy(iv, output, 16);
+
+        input += 16;
+        output += 16;
+        length -= 16;
+    }
+
+    return (0);
+}
+
 void test_encrypt()
 {
     /** Gladman AES **/
@@ -85,7 +119,7 @@ void test_encrypt()
     /** MbedTLS AES **/
 #ifdef mbedtls_aes
     mbedtls_internal_aes_encrypt(&ctx, pt, ct);
-    #endif
+#endif
 }
 
 void test_decrypt()
@@ -109,7 +143,7 @@ void test_decrypt()
     /** MbedTLS AES **/
 #ifdef mbedtls_aes
     mbedtls_internal_aes_decrypt(&ctx, pt, ct);
-    #endif
+#endif
 }
 
 int check_result()
@@ -117,39 +151,17 @@ int check_result()
     return memcmp((char*) pt, (char*) check_encrypt, 16);
 }
 
-volatile uint32_t msTicks = 0; /* Variable to store millisecond ticks */
-
-void SysTick_Handler(void)
-{ /* SysTick interrupt Handler. */
-    msTicks++;
-}
-
 int main(void)
 {
-    uint32_t returnCode;
-    uint32_t Totaltime;
-
-    returnCode = SysTick_Config(SystemCoreClock / 1000); /* Configure SysTick to generate an interrupt every millisecond */
-
-    if (returnCode != 0)
-    { /* Check return code for errors */
-        // Error Handling
-    }
-
-    uint32_t TimeBeforeExecution = msTicks;
-
     /** initialize AES **/
     init_aes();
 
     /** Choose the function to be called **/
     /** Encrypt or decrypt possibly many times **/
-    test_encrypt();
+    // test_encrypt();
     // test_decrypt();
+    aes_encrypt_cbc(1024, iv, pt, ct); // 1024 because need to run with 1K data but needs to be in a multiple of 16 bytes
 
     /** Check the result to see whether AES algorithm is correctly working or not **/
     check_result();
-
-    Totaltime = msTicks - TimeBeforeExecution;
-
-    while(1);
 }
