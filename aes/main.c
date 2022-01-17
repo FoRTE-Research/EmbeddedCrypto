@@ -69,12 +69,10 @@ void init_aes()
 #endif
 }
 
-int aes_encrypt_cbc(size_t length,
-                    unsigned char iv[16], const unsigned char *input,
-                    unsigned char *output)
+int aes_encrypt_cbc(size_t length, unsigned char iv[16],
+                    const unsigned char *input, unsigned char *output)
 {
     int i;
-    unsigned char temp[16];
 
     if (length % 16)
     {
@@ -98,23 +96,52 @@ int aes_encrypt_cbc(size_t length,
     return (0);
 }
 
+int aes_decrypt_cbc(size_t length, unsigned char iv[16],
+                    const unsigned char *input, unsigned char *output)
+{
+    int i;
+    unsigned char temp[16];
+
+    if (length % 16)
+    {
+        return (0); // In case of invalid input length
+    }
+
+    while (length > 0)
+    {
+        memcpy(temp, input, 16);
+        test_decrypt();
+
+        for (i = 0; i < 16; i++)
+            output[i] = (unsigned char) (output[i] ^ iv[i]);
+
+        memcpy(iv, temp, 16);
+
+        input += 16;
+        output += 16;
+        length -= 16;
+    }
+
+    return (0);
+}
+
 void test_encrypt()
 {
     /** Gladman AES **/
 #ifdef gladman_aes
 #ifdef AES_128
     aes_gladman_128_encrypt(key, pt, ct);
-    #elif AES_192
+#elif AES_192
     aes_gladman_192_encrypt(key, pt, ct);
 #else // AES_256
     aes_gladman_256_encrypt(key, pt, ct);
-    #endif
+#endif
 #endif
 
     /** tiny AES **/
 #ifdef tiny_aes
     AES_encrypt(&ctx, key, pt, ct);
-    #endif
+#endif
 
     /** MbedTLS AES **/
 #ifdef mbedtls_aes
@@ -128,17 +155,17 @@ void test_decrypt()
 #ifdef gladman_aes
 #ifdef AES_128
     aes_gladman_128_decrypt(key, ct, pt);
-    #elif AES_192
+#elif AES_192
     aes_gladman_192_decrypt(key, ct, pt);
 #else // AES_256
     aes_gladman_256_decrypt(key, ct, pt);
-    #endif
+#endif
 #endif
 
     /** tiny AES **/
 #ifdef tiny_aes
     AES_decrypt(&ctx, key, ct, pt);
-    #endif
+#endif
 
     /** MbedTLS AES **/
 #ifdef mbedtls_aes
@@ -160,7 +187,8 @@ int main(void)
     /** Encrypt or decrypt possibly many times **/
     // test_encrypt();
     // test_decrypt();
-    aes_encrypt_cbc(1024, iv, pt, ct); // 1024 because need to run with 1K data but needs to be in a multiple of 16 bytes
+    // aes_encrypt_cbc(1024, iv, pt, ct); // 1024 because need to run with 1K data but needs to be in a multiple of 16 bytes
+    aes_decrypt_cbc(1024, iv, pt, ct);
 
     /** Check the result to see whether AES algorithm is correctly working or not **/
     check_result();
