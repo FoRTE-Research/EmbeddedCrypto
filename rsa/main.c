@@ -15,16 +15,17 @@
 //#define mbedtls_rsa
 
 /** need to uncomment if the board you are using is MSP432P401R **/
-#define msp432p401r
+//#define msp432p401r
 //#define riscv
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
 #ifdef msp432p401r
 #include "msp.h"
 #endif
-
-#include <stdio.h>
-#include <string.h>
 
 #ifdef tiny_rsa
 #include "bn.h"
@@ -35,8 +36,8 @@
 #endif
 #ifdef bearssl_rsa
 //#include the header files needed for bearssl_sha here
-#include "bearssl.h"
-#include "inner.h"
+#include "bearssl/bearssl.h"
+#include "bearssl/inner.h"
 #endif
 
 
