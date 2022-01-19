@@ -12,6 +12,10 @@
 #include "tiny_aes/aes.h"
 #endif
 
+#ifdef slow_tiny_aes
+#include "slow_tiny_aes/aes.h"
+#endif
+
 #ifdef mbedtls_aes
 #include "mbedtls/aes.h"
 #endif
@@ -143,6 +147,11 @@ void test_encrypt()
     AES_encrypt(&ctx, key, pt, ct);
 #endif
 
+    /** SLOW tiny AES **/
+#ifdef slow_tiny_aes
+    test_AES_encrypt();
+#endif
+
     /** MbedTLS AES **/
 #ifdef mbedtls_aes
     mbedtls_internal_aes_encrypt(&ctx, pt, ct);
@@ -164,7 +173,12 @@ void test_decrypt()
 
     /** tiny AES **/
 #ifdef tiny_aes
-    AES_decrypt(&ctx, key, ct, pt);
+//    AES_decrypt(&ctx, key, ct, pt);
+#endif
+
+    /** SLOW tiny AES **/
+#ifdef slow_tiny_aes
+    test_AES_decrypt();
 #endif
 
     /** MbedTLS AES **/
@@ -185,10 +199,10 @@ int main(void)
 
     /** Choose the function to be called **/
     /** Encrypt or decrypt possibly many times **/
-    // test_encrypt();
+    test_encrypt();
     // test_decrypt();
     // aes_encrypt_cbc(1024, iv, pt, ct); // 1024 because need to run with 1K data but needs to be in a multiple of 16 bytes
-    aes_decrypt_cbc(1024, iv, pt, ct);
+    // aes_decrypt_cbc(1024, iv, pt, ct);
 
     /** Check the result to see whether AES algorithm is correctly working or not **/
     check_result();
