@@ -1,8 +1,26 @@
 #include "test.h" // Change test.h to select different algorithms
 
-/// DO NOT EDIT BELOW  //////////////////////////////////////////
 #include <stdint.h>
 #include <string.h>
+
+#ifdef msp432p401r
+#include "msp.h"
+#include "rom_map.h"
+#include "rom.h"
+#include "systick.h"
+#endif
+
+#ifdef msp430g2553
+#include "msp430.h"
+#include "msp430g2553.h"
+#endif
+
+#ifdef msp430fr5994
+#include "msp430.h"
+#include "msp430fr5994.h"
+#endif
+
+#include "experiment_time.h"
 
 #ifdef gladman_aes
 #include "gladman/aestst.h"
@@ -20,26 +38,26 @@
 #include "mbedtls/aes.h"
 #endif
 
-#ifdef msp432p401r
-#include "msp.h"
-#endif
 
 /** Globals (test inputs) **/
-/** key, ciphertext **/
 uint8_t key[] = { 0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73,
                   0xae, 0xf0, 0x85, 0x7d, 0x77, 0x81, 0x1f, 0x35, 0x2c, 0x07,
                   0x3b, 0x61, 0x08, 0xd7, 0x2d, 0x98, 0x10, 0xa3, 0x09, 0x14,
                   0xdf, 0xf4 };
-uint8_t ct[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c, 0x06, 0x4b,
-                 0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8 };
 uint8_t check_encrypt[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c,
                             0x06, 0x4b, 0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8 };
+#ifdef AES_CBC
+uint8_t pt[MSG_LNGTH];
+uint8_t ct[MSG_LNGTH];
+// initialization vector for CBC mode
+unsigned char iv[AES_BLOCK_SIZE_BYTES] = { 0xb2, 0x4b, 0xf2, 0xf7, 0x7a, 0xc5, 0xec, 0x0c, 0x5e,
+                         0x1f, 0x4d, 0xc1, 0xae, 0x46, 0x5e, 0x75 };
+#else
 uint8_t pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d,
                  0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
-
-// initialization vector for CBC mode
-unsigned char iv[16] = { 0xb2, 0x4b, 0xf2, 0xf7, 0x7a, 0xc5, 0xec, 0x0c, 0x5e,
-                         0x1f, 0x4d, 0xc1, 0xae, 0x46, 0x5e, 0x75 };
+uint8_t ct[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c, 0x06, 0x4b,
+                 0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8 };
+#endif
 
 /** contexts **/
 #ifdef tiny_aes
@@ -71,62 +89,6 @@ void init_aes()
     mbedtls_aes_init(&ctx);
     mbedtls_aes_setkey_enc(&ctx, key, keysize);
 #endif
-}
-
-int aes_encrypt_cbc(size_t length, unsigned char iv[16],
-                    const unsigned char *input, unsigned char *output)
-{
-    int i;
-
-    if (length % 16)
-    {
-        return (0); // In case of invalid input length
-    }
-
-    while (length > 0)
-    {
-        for (i = 0; i < 16; i++)
-            output[i] = (unsigned char) (input[i] ^ iv[i]);
-
-        // mbedtls_internal_aes_encrypt(&ctx, pt, ct);
-        test_encrypt();
-        memcpy(iv, output, 16);
-
-        input += 16;
-        output += 16;
-        length -= 16;
-    }
-
-    return (0);
-}
-
-int aes_decrypt_cbc(size_t length, unsigned char iv[16],
-                    const unsigned char *input, unsigned char *output)
-{
-    int i;
-    unsigned char temp[16];
-
-    if (length % 16)
-    {
-        return (0); // In case of invalid input length
-    }
-
-    while (length > 0)
-    {
-        memcpy(temp, input, 16);
-        test_decrypt();
-
-        for (i = 0; i < 16; i++)
-            output[i] = (unsigned char) (output[i] ^ iv[i]);
-
-        memcpy(iv, temp, 16);
-
-        input += 16;
-        output += 16;
-        length -= 16;
-    }
-
-    return (0);
 }
 
 void test_encrypt()
@@ -173,7 +135,7 @@ void test_decrypt()
 
     /** tiny AES **/
 #ifdef tiny_aes
-//    AES_decrypt(&ctx, key, ct, pt);
+    AES_decrypt(&ctx, key, ct, pt);
 #endif
 
     /** SLOW tiny AES **/
@@ -192,18 +154,74 @@ int check_result()
     return memcmp((char*) pt, (char*) check_encrypt, 16);
 }
 
-int main(void)
-{
+#ifdef AES_CBC
+void aes_encrypt_cbc(size_t length) {
+    uint8_t * p = pt;
+    uint8_t * c = ct;
+
+    while (length > 0) {
+        // Perform IV xor PT for 128 bits
+        int i = 0;
+        for (i = 0; i < AES_BLOCK_SIZE_BYTES; i++)
+            p[i] = p[i] ^ iv[i];
+
+        // Perform 1 encrypt
+        test_encrypt();
+
+        // IV is now CT
+        memcpy(iv, c, AES_BLOCK_SIZE_BYTES);
+
+        // Go to next block of PT
+        p += AES_BLOCK_SIZE_BYTES;
+        c += AES_BLOCK_SIZE_BYTES;
+        length -= AES_BLOCK_SIZE_BYTES;
+    }
+}
+
+void aes_decrypt_cbc(size_t length) {
+    uint8_t * p = pt;
+    uint8_t * c = ct;
+
+    while (length > 0) {
+        // Perform 1 encrypt
+        test_decrypt();
+
+        // Perform IV xor PT for 128 bits
+        int i = 0;
+        for (i = 0; i < AES_BLOCK_SIZE_BYTES; i++)
+             p[i] = p[i] ^ iv[i];
+
+        // IV is now CT
+        memcpy(iv, c, AES_BLOCK_SIZE_BYTES);
+
+        // Go to next block of PT
+        p += AES_BLOCK_SIZE_BYTES;
+        c += AES_BLOCK_SIZE_BYTES;
+        length -= AES_BLOCK_SIZE_BYTES;
+    }
+}
+#endif
+
+void main(void) {
+    board_init();
+
+    startTimer();
+
     /** initialize AES **/
     init_aes();
 
     /** Choose the function to be called **/
     /** Encrypt or decrypt possibly many times **/
-    test_encrypt();
+     test_encrypt();
     // test_decrypt();
-    // aes_encrypt_cbc(1024, iv, pt, ct); // 1024 because need to run with 1K data but needs to be in a multiple of 16 bytes
-    // aes_decrypt_cbc(1024, iv, pt, ct);
+    //aes_encrypt_cbc(sizeof(pt));
+    // aes_decrypt_cbc(sizeof(ct));
 
     /** Check the result to see whether AES algorithm is correctly working or not **/
-    check_result();
+    //check_result();
+
+    volatile unsigned int elapsed = getElapsedTime();
+
+    while(1);
 }
+
