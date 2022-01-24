@@ -12,12 +12,10 @@
 
 #ifdef msp430g2553
 #include "msp430.h"
-#include "msp430g2553.h"
 #endif
 
 #ifdef msp430fr5994
 #include "msp430.h"
-#include "msp430fr5994.h"
 #endif
 
 #include "experiment_time.h"
