@@ -10,7 +10,20 @@
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
 #ifdef msp432p401r
 #include "msp.h"
+#include "rom_map.h"
+#include "rom.h"
+#include "systick.h"
 #endif
+
+#ifdef msp430g2553
+#include "msp430.h"
+#endif
+
+#ifdef msp430fr5994
+#include "msp430.h"
+#endif
+
+#include "experiment_time.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -33,12 +46,13 @@
 /** Globals (test inputs) **/
 unsigned char hval[DIGEST_BYTES];
 unsigned char data[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnop"; // Data you want to hash
-unsigned char check_sha256[] = "aa353e009edbaebfc6e494c8d847696896cb8b398e0173a4b5c1b636292d87c7";
+unsigned char check_sha256[] =
+        "aa353e009edbaebfc6e494c8d847696896cb8b398e0173a4b5c1b636292d87c7";
 size_t len = sizeof(data);
 
 /** contexts **/
 #ifdef gladman_sha
-    sha256_ctx cx[1];
+sha256_ctx cx[1];
 #endif
 #ifdef saddi_sha
     SHA256_CTX ctx;
@@ -48,7 +62,8 @@ size_t len = sizeof(data);
 #endif
 
 /** Call initialization functions for different SHA implementations **/
-void init_sha() {
+void init_sha()
+{
 #ifdef gladman_sha
     sha256_begin(cx);
 #endif
@@ -60,7 +75,8 @@ void init_sha() {
 #endif
 }
 
-int test_sha256() {
+int test_sha256()
+{
 #ifdef gladman_sha
     sha256(hval, data, len, cx);
     // hval now contains SHA256(data)
@@ -76,19 +92,27 @@ int test_sha256() {
 #endif
 }
 
-int check_result() {
+int check_result()
+{
     return memcmp((char*) hval, (char*) check_sha256, DIGEST_BYTES);
 }
 
-int main (int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
+    board_init();
 
-  /** initialize SHA **/
-  init_sha();
+    startTimer();
 
-  /** test SHA-256 **/
-  test_sha256();
+    /** initialize SHA **/
+    init_sha();
 
-  /** Check the result to see whether AES algorithm is correctly working or not **/
-  check_result();
+    /** test SHA-256 **/
+    test_sha256();
+
+    /** Check the result to see whether SHA algorithm is correctly working or not **/
+    check_result();
+
+    volatile unsigned int elapsed = getElapsedTime();
+
+    while (1);
 
 }
