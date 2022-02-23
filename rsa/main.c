@@ -25,7 +25,20 @@
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
 #ifdef msp432p401r
 #include "msp.h"
+#include "rom_map.h"
+#include "rom.h"
+#include "systick.h"
 #endif
+
+#ifdef msp430g2553
+#include "msp430.h"
+#endif
+
+#ifdef msp430fr5994
+#include "msp430.h"
+#endif
+
+#include "experiment_time.h"
 
 #ifdef tiny_rsa
 #include "tiny_rsa/rsa_test.h"
@@ -208,9 +221,9 @@ void init_rsa() {
 #endif
 }
 
-int test_rsa() {
+void test_encrypt() {
 #ifdef tiny_rsa
-    rsa1024(public, private, resultBuffer, plain_text);
+    rsa1024_encrypt(public, private, resultBuffer, plain_text);
 #endif
 #ifdef mbedtls_rsa
     // Call the function to test the rsa here
@@ -283,15 +296,26 @@ void check_result() {
 #endif
 }
 
-int main (int argc, char *argv[]) {
+void main(void) {
+
+    /** Initialize the board **/
+    board_init();
+
+    /** Starting the timer to measure elapsed time **/
+    startTimer();
 
     /** initialize RSA **/
     init_rsa();
 
     /** test rsa **/
-    test_rsa();
+    test_encrypt();
+    //test_decrypt();
 
     /** Check the result to see whether RSA algorithm is correctly working or not **/
     check_result();
+
+    volatile unsigned int elapsed = getElapsedTime();
+
+    while (1);
 
 }
