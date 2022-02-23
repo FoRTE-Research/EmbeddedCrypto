@@ -15,7 +15,7 @@
 //#define mbedtls_rsa
 
 /** need to uncomment if the board you are using is MSP432P401R **/
-//#define msp432p401r
+#define msp432p401r
 //#define riscv
 
 #include <stdio.h>
@@ -28,7 +28,7 @@
 #endif
 
 #ifdef tiny_rsa
-#include "rsa_test.h"
+#include "tiny_rsa/rsa_test.h"
 #endif
 #ifdef  mbedtls_rsa
 //#include the header files needed for mbedtls_rsa here
@@ -87,105 +87,6 @@ char private[257];
 char cipher[257];
 int plain_text;
 
-/** other needed function **/
-#ifdef bearssl_rsa
-
-static size_t
-hextobin(unsigned char *dst, const char *src)
-{
-    size_t num;
-    unsigned acc;
-    int z;
-
-    num = 0;
-    z = 0;
-    acc = 0;
-    while (*src != 0) {
-        int c = *src ++;
-        if (c >= '0' && c <= '9') {
-            c -= '0';
-        } else if (c >= 'A' && c <= 'F') {
-            c -= ('A' - 10);
-        } else if (c >= 'a' && c <= 'f') {
-            c -= ('a' - 10);
-        } else {
-            continue;
-        }
-        if (z) {
-            *dst ++ = (acc << 4) + c;
-            num ++;
-        } else {
-            acc = c;
-        }
-        z = !z;
-    }
-    return num;
-}
-
-/*
- * Fake RNG that returns exactly the provided bytes.
- */
-typedef struct {
-    const br_prng_class *vtable;
-    unsigned char buf[128];
-    size_t ptr, len;
-} rng_fake_ctx;
-
-static void rng_fake_init(rng_fake_ctx *cc,
-                          const void *params, const void *seed, size_t len);
-static void rng_fake_generate(rng_fake_ctx *cc, void *dst, size_t len);
-static void rng_fake_update(rng_fake_ctx *cc, const void *src, size_t len);
-
-static const br_prng_class rng_fake_vtable = {
-        sizeof(rng_fake_ctx),
-        (void (*)(const br_prng_class **,
-                  const void *, const void *, size_t))&rng_fake_init,
-        (void (*)(const br_prng_class **,
-                  void *, size_t))&rng_fake_generate,
-        (void (*)(const br_prng_class **,
-                  const void *, size_t))&rng_fake_update
-};
-
-static void
-rng_fake_init(rng_fake_ctx *cc, const void *params,
-              const void *seed, size_t len)
-{
-    (void)params;
-    if (len > sizeof cc->buf) {
-        fprintf(stderr, "seed is too large (%lu bytes)\n",
-                (unsigned long)len);
-        exit(EXIT_FAILURE);
-    }
-    cc->vtable = &rng_fake_vtable;
-    memcpy(cc->buf, seed, len);
-    cc->ptr = 0;
-    cc->len = len;
-}
-
-static void
-rng_fake_generate(rng_fake_ctx *cc, void *dst, size_t len)
-{
-    if (len > (cc->len - cc->ptr)) {
-        fprintf(stderr, "asking for more data than expected\n");
-        exit(EXIT_FAILURE);
-    }
-    memcpy(dst, cc->buf + cc->ptr, len);
-    cc->ptr += len;
-}
-
-static void
-rng_fake_update(rng_fake_ctx *cc, const void *src, size_t len)
-{
-    (void)cc;
-    (void)src;
-    (void)len;
-    fprintf(stderr, "unexpected update\n");
-    exit(EXIT_FAILURE);
-}
-
-#endif
-
-
 
 /** Call initialization functions for different RSA implementations **/
 void init_rsa() {
@@ -212,8 +113,98 @@ void init_rsa() {
     //call for init function here
 #endif
 #ifdef bearssl_rsa
-    //call for init function here
-    // do nothing...
+    static size_t
+    hextobin(unsigned char *dst, const char *src)
+    {
+        size_t num;
+        unsigned acc;
+        int z;
+
+        num = 0;
+        z = 0;
+        acc = 0;
+        while (*src != 0) {
+            int c = *src ++;
+            if (c >= '0' && c <= '9') {
+                c -= '0';
+            } else if (c >= 'A' && c <= 'F') {
+                c -= ('A' - 10);
+            } else if (c >= 'a' && c <= 'f') {
+                c -= ('a' - 10);
+            } else {
+                continue;
+            }
+            if (z) {
+                *dst ++ = (acc << 4) + c;
+                num ++;
+            } else {
+                acc = c;
+            }
+            z = !z;
+        }
+        return num;
+    }
+
+    /*
+     * Fake RNG that returns exactly the provided bytes.
+     */
+    typedef struct {
+        const br_prng_class *vtable;
+        unsigned char buf[128];
+        size_t ptr, len;
+    } rng_fake_ctx;
+
+    static void rng_fake_init(rng_fake_ctx *cc,
+                              const void *params, const void *seed, size_t len);
+    static void rng_fake_generate(rng_fake_ctx *cc, void *dst, size_t len);
+    static void rng_fake_update(rng_fake_ctx *cc, const void *src, size_t len);
+
+    static const br_prng_class rng_fake_vtable = {
+            sizeof(rng_fake_ctx),
+            (void (*)(const br_prng_class **,
+                      const void *, const void *, size_t))&rng_fake_init,
+            (void (*)(const br_prng_class **,
+                      void *, size_t))&rng_fake_generate,
+            (void (*)(const br_prng_class **,
+                      const void *, size_t))&rng_fake_update
+    };
+
+    static void
+    rng_fake_init(rng_fake_ctx *cc, const void *params,
+                  const void *seed, size_t len)
+    {
+        (void)params;
+        if (len > sizeof cc->buf) {
+            fprintf(stderr, "seed is too large (%lu bytes)\n",
+                    (unsigned long)len);
+            exit(EXIT_FAILURE);
+        }
+        cc->vtable = &rng_fake_vtable;
+        memcpy(cc->buf, seed, len);
+        cc->ptr = 0;
+        cc->len = len;
+    }
+
+    static void
+    rng_fake_generate(rng_fake_ctx *cc, void *dst, size_t len)
+    {
+        if (len > (cc->len - cc->ptr)) {
+            fprintf(stderr, "asking for more data than expected\n");
+            exit(EXIT_FAILURE);
+        }
+        memcpy(dst, cc->buf + cc->ptr, len);
+        cc->ptr += len;
+    }
+
+    static void
+    rng_fake_update(rng_fake_ctx *cc, const void *src, size_t len)
+    {
+        (void)cc;
+        (void)src;
+        (void)len;
+        fprintf(stderr, "unexpected update\n");
+        exit(EXIT_FAILURE);
+    }
 #endif
 }
 
@@ -225,7 +216,6 @@ int test_rsa() {
     // Call the function to test the rsa here
 #endif
 #ifdef bearssl_rsa
-    // Call the function to test the rsa here
     size_t u;
     u = 0;
 
@@ -289,11 +279,7 @@ void check_result() {
         assert(resultBuffer[i] == cipher[i]);
     }
 #elif defined(bearssl_rsa)
-    if (memcmp((char*) cipher, (char*) resultBuffer, check_result_len) == 0) {
-        printf("done");
-        return;
-    }
-    printf("fail");
+    return memcmp((char*) cipher, (char*) resultBuffer, check_result_len);
 #endif
 }
 
