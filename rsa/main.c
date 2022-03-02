@@ -295,12 +295,13 @@ int check_result() {
 
 void main(void) {
 
+#ifndef riscv
     /** Initialize the board **/
     board_init();
 
     /** Starting the timer to measure elapsed time **/
     startTimer();
-
+#endif
     /** initialize RSA **/
     init_rsa();
 
@@ -310,8 +311,9 @@ void main(void) {
 
     /** Check the result to see whether RSA algorithm is correctly working or not **/
     check_result();
-
+#ifndef riscv
     volatile unsigned int elapsed = getElapsedTime();
+#endif
 
     while (1);
 
