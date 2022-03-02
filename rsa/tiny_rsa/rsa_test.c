@@ -1,6 +1,9 @@
 //
 // Created by willi on 2022/2/22.
+// This file contains functions that have been extracted from rsa.c of tiny RSA.
+// The function names have been modified from the original rsa.c.
 //
+
 #include "bn.h"
 
 /* O(log n) */
