@@ -13,6 +13,7 @@
 //#define bearssl_rsa
 //#define libtomcrypt_rsa
 //#define mbedtls_rsa
+//#define codebase
 
 /** need to uncomment if the board you are using is MSP432P401R **/
 #define msp432p401r
@@ -42,6 +43,9 @@
 
 #ifdef tiny_rsa
 #include "tiny_rsa/rsa_test.h"
+#endif
+#ifdef codebase
+#include "codebase/rsa.h"
 #endif
 #ifdef  mbedtls_rsa
 //#include the header files needed for mbedtls_rsa here
@@ -227,6 +231,9 @@ void test_encrypt() {
 #endif
 #ifdef mbedtls_rsa
     // Call the function to test the rsa here
+#endif
+#ifdef codebase
+    rsaTest();
 #endif
 #ifdef bearssl_rsa
     size_t u;
