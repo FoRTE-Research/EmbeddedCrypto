@@ -93,13 +93,17 @@ typedef struct mbedtls_md_info_t mbedtls_md_info_t;
 typedef struct mbedtls_md_context_t
 {
     /** Information about the associated message digest. */
-    const mbedtls_md_info_t *MBEDTLS_PRIVATE(md_info);
+//    const mbedtls_md_info_t *MBEDTLS_PRIVATE(md_info);
+    const mbedtls_md_info_t *md_info;
 
     /** The digest-specific context. */
-    void *MBEDTLS_PRIVATE(md_ctx);
+//    void *MBEDTLS_PRIVATE(md_ctx);
+    void *md_ctx;
 
     /** The HMAC part of the context. */
-    void *MBEDTLS_PRIVATE(hmac_ctx);
+//    void *MBEDTLS_PRIVATE(hmac_ctx);
+    void *hmac_ctx;
+
 } mbedtls_md_context_t;
 
 /**

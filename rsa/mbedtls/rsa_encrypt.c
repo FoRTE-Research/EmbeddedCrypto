@@ -18,7 +18,6 @@
  */
 
 #include "build_info.h"
-#include "msp.h" // NEED TO DELETE LATER
 
 #if defined(MBEDTLS_PLATFORM_C)
 #include "platform.h"
@@ -54,6 +53,7 @@ int main( void )
 }
 #else
 
+
 int main( int argc, char *argv[] )
 {
     FILE *f;
@@ -82,8 +82,7 @@ int main( int argc, char *argv[] )
     mbedtls_printf( "\n  . Seeding the random number generator..." );
     fflush( stdout );
 
-    mbedtls_mpi_init( &N );
-    mbedtls_mpi_init( &E );
+    mbedtls_mpi_init( &N ); mbedtls_mpi_init( &E );
     mbedtls_rsa_init( &rsa );
     mbedtls_ctr_drbg_init( &ctr_drbg );
     mbedtls_entropy_init( &entropy );

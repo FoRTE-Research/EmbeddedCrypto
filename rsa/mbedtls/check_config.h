@@ -589,9 +589,9 @@
 #error "MBEDTLS_SHA224_C defined without MBEDTLS_SHA256_C"
 #endif
 
-#if defined(MBEDTLS_SHA256_C) && !defined(MBEDTLS_SHA224_C)
-#error "MBEDTLS_SHA256_C defined without MBEDTLS_SHA224_C"
-#endif
+//#if defined(MBEDTLS_SHA256_C) && !defined(MBEDTLS_SHA224_C)
+//#error "MBEDTLS_SHA256_C defined without MBEDTLS_SHA224_C"
+//#endif
 
 #if defined(MBEDTLS_SSL_PROTO_TLS1_2) && ( !defined(MBEDTLS_SHA1_C) &&     \
     !defined(MBEDTLS_SHA256_C) && !defined(MBEDTLS_SHA512_C) )
