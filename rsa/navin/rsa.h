@@ -8,6 +8,8 @@
 #ifndef RSA_H_
 #define RSA_H_
 
+#include <stdbool.h>
+
 bool addbignum(uint64_t res[], uint64_t op1[], uint64_t op2[],uint32_t n);
 bool subbignum(uint64_t res[], uint64_t op1[], uint64_t op2[],uint32_t n);
 bool modbignum(uint64_t res[],uint64_t op1[], uint64_t op2[],uint32_t n);
