@@ -60,7 +60,7 @@ Change file name ".risc_Makefile" to "Makefile".\
 Uncomment the definition in the file containing the main function.
 
 ## Apollo3 Blue
-Aside from the actual Sparkfun Edge development board (https://www.sparkfun.com/products/15170), you need a CH340C serial to USB adapter: https://www.sparkfun.com/products/15096.
+Aside from the actual Sparkfun Edge development board (https://www.sparkfun.com/products/15170), you need a CH340C serial to USB adapter (https://www.sparkfun.com/products/15096).
 
 #### Running AES
 First, download the Ambiq Suite SDK for developing on Sparkfun Ambiq boards.
