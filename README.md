@@ -58,3 +58,39 @@ Select the algorithm you want to use and copy all the file inside the folder to 
 Change file name ".risc_Makefile" to "Makefile".\
 **MSP432P401R :**
 Uncomment the definition in the file containing the main function.
+
+## Apollo3 Blue
+Aside from the actual Sparkfun Edge development board (https://www.sparkfun.com/products/15170), you need a CH340C serial to USB adapter: https://www.sparkfun.com/products/15096.
+
+#### Running AES
+First, download the Ambiq Suite SDK for developing on Sparkfun Ambiq boards.
+```
+git clone --recursive https://github.com/sparkfun/AmbiqSuiteSDK
+```
+
+Next download and apply the serial adapter driver update.
+```
+git clone https://github.com/juliagoda/CH341SER.git
+cd CH341SER
+make
+sudo make load
+```
+
+Next, navigate to the project directory for AES on the Apollo board:
+```
+cd aes/apollo/gcc
+```
+
+You are now ready to flash the AES program to the Apollo board.
+Connect the serial-to-usb adapter to the PC and the Apollo board to the adapter.
+Note that **you must run the make command as sudo** (because this command is going to flash the board) and **you must press down button 14 on the Edge board during programming** (to use the bootloader).
+The format of the make command will vary depending on your installation. Generally:
+```
+sudo make BOARDPATH=<Ambiq SDK Location>/boards_sfe/edge COM_PORT=<The USB port the adapter is connected to> ASB_UPLOAD_BAUD=921600 SDKPATH=<Ambiq SDK Location> COMMONPATH=<Ambiq SDK Location>/boards_sfe/common bootload_asb
+```
+As an example, my complete make command is:
+```
+sudo make BOARDPATH=/home/harrison/AmbiqSuiteSDK/boards_sfe/edge COM_PORT=/dev/ttyUSB0 ASB_UPLOAD_BAUD=921600 SDKPATH=/home/harrison/AmbiqSuiteSDK COMMONPATH=/home/harrison/AmbiqSuiteSDK/boards_sfe/common bootload_asb
+```
+
+After programming, press the RST button on the Edge board. The green LED (labelled 44 on the silkscreen) should light up, indicating that the AES encryption succesfully completed.
