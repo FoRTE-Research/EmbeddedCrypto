@@ -23,7 +23,7 @@ __interrupt void TimeA0 (void)
 
 #define startTimer() TA0CCTL0 = CCIE;                 /* CCR0 interrupt enabled */    \
                      TA0CTL = TASSEL_2 + MC_1 + ID_3; /* SMCLK/8 (1 MHz/8), upmode */ \
-                     TA0CCR0 =  128;                  /* 1 KHz */                     \
+                     TA0CCR0 =  128;                  /* 976.6 Hz */                     \
                      __bis_SR_register(GIE);         /* Enable all interrupts */     \
                      unsigned int start = ticks
 #endif
