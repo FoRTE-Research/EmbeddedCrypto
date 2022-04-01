@@ -94,3 +94,12 @@ sudo make BOARDPATH=/home/harrison/AmbiqSuiteSDK/boards_sfe/edge COM_PORT=/dev/t
 ```
 
 After programming, press the RST button on the Edge board. The green LED (labelled 44 on the silkscreen) should light up, indicating that the AES encryption succesfully completed.
+
+#### Measuring execution time
+The provided test code toggles GPIOs to be measured by an oscilloscope for timing the AES execution.
+
+Probe pin 1 (labelled on the silkscreen) and reset the device to re-execute the AES encryption.
+Before AES encryption, the pin will toggle 3 times and then clear.
+Then, the pin is set immediately before the AES encryption and cleared immediately after.
+Below is an example of the expected waveform for AES192.
+![AES192 Encryption Waveform](aes192apollo.png)
