@@ -103,3 +103,5 @@ Before AES encryption, the pin will toggle 3 times and then clear.
 Then, the pin is set immediately before the AES encryption and cleared immediately after.
 Below is an example of the expected waveform for AES192.
 ![AES192 Encryption Waveform](aes192apollo.png)
+
+TODO add timing using hardware timer
