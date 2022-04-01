@@ -62,7 +62,7 @@ Uncomment the definition in the file containing the main function.
 ## Apollo3 Blue
 Aside from the actual Sparkfun Edge development board (https://www.sparkfun.com/products/15170), you need a CH340C serial to USB adapter (https://www.sparkfun.com/products/15096).
 
-#### Running AES
+### Running AES
 First, download the Ambiq Suite SDK for developing on Sparkfun Ambiq boards.
 ```
 git clone --recursive https://github.com/sparkfun/AmbiqSuiteSDK
@@ -95,13 +95,20 @@ sudo make BOARDPATH=/home/harrison/AmbiqSuiteSDK/boards_sfe/edge COM_PORT=/dev/t
 
 After programming, press the RST button on the Edge board. The green LED (labelled 44 on the silkscreen) should light up, indicating that the AES encryption succesfully completed.
 
-#### Measuring execution time
-The provided test code toggles GPIOs to be measured by an oscilloscope for timing the AES execution.
+### Measuring execution time
+The provided test code includes two ways to measure AES execution time.
+The primary way is through an on-chip 3MHz hardware timer, the result of which is output over UART.
+Alternatively, the code also toggles GPIOs to be measured by an oscilloscope for timing the AES execution.
 
-Probe pin 1 (labelled on the silkscreen) and reset the device to re-execute the AES encryption.
+#### Timer
+Connect the device to a UART terminal with 115200 baud rate, 8 data bits, no parity, and 1 stop bit.
+Reset the device to re-execute the AES execution.
+The device will output the execution time in micro-seconds over UART.
+
+#### Oscilloscope
+Probe pin 1 (labelled on the silkscreen) and reset the device to re-execute the AES execution.
 Before AES encryption, the pin is cleared.
 Then, the pin is set immediately before the AES encryption and cleared immediately after.
 Below is an example of the expected waveform for AES192.
 ![AES192 Encryption Waveform](aes192apollo.png)
 
-TODO add timing using hardware timer
