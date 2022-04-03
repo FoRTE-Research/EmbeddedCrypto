@@ -1,7 +1,7 @@
 /** need to choose which SHA implementation to run **/
-//#define gladman_sha
+#define gladman_sha
 //#define saddi_sha
-#define mbedtls_sha
+//#define mbedtls_sha
 
 /** need to uncomment if the board you are using is MSP432P401R **/
 #define msp432p401r
