@@ -105,9 +105,9 @@ Issue Date: 20/12/2007
 #define do_enc(a,b,c,d) f_ecb_enc(a, b, c, 1)
 #define do_dec(a,b,c,d) f_ecb_dec(a, b, c, 1)
 #endif
-
-int aes_gladman_128_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
-int aes_gladman_128_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
+void gladman_init(uint8_t *key, uint8_t *pt, uint8_t* ct, long n);
+int aes_gladman_128_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct, unsigned char *out);
+int aes_gladman_128_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct, unsigned char *out);
 int aes_gladman_192_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
 int aes_gladman_192_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
 int aes_gladman_256_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);

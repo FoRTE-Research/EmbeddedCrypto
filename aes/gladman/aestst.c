@@ -64,28 +64,28 @@ void gladman_init(uint8_t *key, uint8_t *pt, uint8_t* ct, long n) {
     }
 
     //init plain text
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < n; i++) {
         pih[i] = pt[i];
     }
 
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < n; i++) {
         res[i] = ct[i];
     }
 }
 
-int aes_gladman_128_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
-    unsigned char   out[32] , ret[32], err = 0;
-    f_ectx          alge[1];
+int aes_gladman_128_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct, unsigned char *out) {
 
+    f_ectx          alge[1];
     memset(&alge, 0, sizeof(aes_encrypt_ctx));
     gladman_init(key, pt, ct, 16);
     f_enc_key128(alge, exh);
     do_enc(alge, pih, out, 1);
+
     return 0;
 }
 
-int aes_gladman_128_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct) {
-    unsigned char   out[32] , ret[32], err = 0;
+int aes_gladman_128_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct, unsigned char *out) {
+    unsigned char   ret[32];
     f_dctx          algd[1];
 
     memset(&algd, 0, sizeof(aes_decrypt_ctx));
