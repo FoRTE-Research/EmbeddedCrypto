@@ -8,9 +8,10 @@
 //#define mbedtls_aes
 
 /** need to uncomment if the board you are using is MSP432P401R **/
-#define msp432p401r
+//#define msp432p401r
 //#define msp430g2553
 //#define riscv
+#define adafruitm0express
 
 /** need to define key size **/
 #define AES_128 1
