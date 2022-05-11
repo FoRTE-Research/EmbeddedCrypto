@@ -26,10 +26,12 @@
 
 #ifdef tiny_aes
 #include "tiny_aes/aes.h"
+#include "tiny_aes/aes.c" // For Adafruit M0 Metro Express
 #endif
 
 #ifdef slow_tiny_aes
 #include "slow_tiny_aes/aes.h"
+#include "slow_tiny_aes/aes.c" // For Adafruit M0 Metro Express
 #endif
 
 #ifdef mbedtls_aes
@@ -200,26 +202,52 @@ void aes_decrypt_cbc(size_t length) {
 }
 #endif
 
+/** Set up the timer for Adafruit Metro M0 Express **/
+void setup() {
+  Serial.begin(9600);
+}
+
 void main(void) {
-    board_init();
+#ifdef msp432p401r
+  /** Initialize the board **/
+  board_init();
 
-    startTimer();
+  /** Starting the timer to measure elapsed time **/
+  startTimer();
+#endif
+#ifdef adafruitm0express
+  /** Measure the starting time **/
+  setup();
+  unsigned long start, finished, elapsed;
+  start = micros();
+#endif
+  
+  /** initialize AES **/
+  init_aes();
 
-    /** initialize AES **/
-    init_aes();
+  /** Choose the function to be called **/
+  /** Encrypt or decrypt possibly many times **/
+  /** test aes **/
+  test_encrypt();
+  //test_decrypt();
 
-    /** Choose the function to be called **/
-    /** Encrypt or decrypt possibly many times **/
-     test_encrypt();
-    // test_decrypt();
-    //aes_encrypt_cbc(sizeof(pt));
-    // aes_decrypt_cbc(sizeof(ct));
+  /** Check the result to see whether RSA algorithm is correctly working or not **/
+  check_result();
+  
+#ifdef msp432p401r
+  volatile unsigned int elapsed = getElapsedTime();
+#endif
+#ifdef adafruitm0express
+  /** Calculate the elapsed time **/
+  finished = micros();
+  elapsed = finished - start;
+  Serial.print("Time taken by the task: ");
+  Serial.println(elapsed);
+  
+  // wait a second so as not to send massive amounts of data
+  delay(1000);
+#endif
 
-    /** Check the result to see whether AES algorithm is correctly working or not **/
-    //check_result();
-
-    volatile unsigned int elapsed = getElapsedTime();
-
-    while(1);
+  //  while (1);
 }
 
