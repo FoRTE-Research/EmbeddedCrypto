@@ -429,9 +429,9 @@ void AES_encrypt(struct AES_ctx* ctx, uint8_t key[], uint8_t in[], uint8_t out[]
     Cipher((state_t*)in, ctx->RoundKey);
 }
 
-int * AES_decrypt(struct AES_ctx* ctx, uint8_t key[], uint8_t out[], uint8_t in[])
+uint8_t * AES_decrypt(struct AES_ctx* ctx, uint8_t key[], uint8_t out[], uint8_t in[])
 {
     // The next function call decrypts the PlainText with the Key using AES algorithm.
     InvCipher((state_t*)out, ctx->RoundKey);
-    return *out;
+    return out;
 }
