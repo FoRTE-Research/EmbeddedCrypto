@@ -32,7 +32,7 @@ Issue Date: 20/12/2007
 
 /* define the hash functions that you need  */
 /* define for 64-bit SHA384 and SHA512      */
-#define SHA_64BIT
+// #define SHA_64BIT
 #define SHA_2   /* for dynamic hash length  */
 #define SHA_224
 #define SHA_256
