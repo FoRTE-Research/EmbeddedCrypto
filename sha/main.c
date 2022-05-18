@@ -1,11 +1,12 @@
 /** need to choose which SHA implementation to run **/
-#define gladman_sha
-//#define saddi_sha
-//#define mbedtls_sha
+// #define gladman_sha
+#define saddi_sha
+// #define mbedtls_sha
 
 /** need to uncomment if the board you are using is MSP432P401R **/
-#define msp432p401r
+// #define msp432p401r
 //#define riscv
+#define adafruitm0express
 
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
 #ifdef msp432p401r
@@ -32,13 +33,16 @@
 #include <memory.h>
 #include <ctype.h>
 #include "gladman/sha2.h"
+#include "gladman/sha2.c"
 #endif
 #ifdef saddi_sha
 #include "saddi/sha256.h"
+#include "saddi/sha256.c"
 #include <stdlib.h>
 #endif
 #ifdef mbedtls_sha
 #include "mbedtls/sha256.h"
+#include "mbedtls/sha256.c"
 #endif
 
 #define DIGEST_BYTES (256/8)
@@ -75,7 +79,7 @@ void init_sha()
 #endif
 }
 
-int test_sha256()
+void test_sha256()
 {
 #ifdef gladman_sha
     sha256(hval, data, len, cx);
@@ -97,10 +101,25 @@ int check_result()
     return memcmp((char*) hval, (char*) check_sha256, DIGEST_BYTES);
 }
 
-int main(int argc, char *argv[]) {
-    board_init();
+/** Setting up SysTick timer for Adafruit Metro M0 Express **/
+void setup() {
+  Serial.begin(9600);
+}
 
-    startTimer();
+void main() {
+#ifdef msp432p401r
+  /** Initialize the board **/
+  board_init();
+
+  /** Starting the timer to measure elapsed time **/
+  startTimer();
+#endif
+#ifdef adafruitm0express
+  /** Measure the starting time **/
+  setup();
+  unsigned long start, finished, elapsed;
+  start = micros();
+#endif
 
     /** initialize SHA **/
     init_sha();
@@ -111,8 +130,20 @@ int main(int argc, char *argv[]) {
     /** Check the result to see whether SHA algorithm is correctly working or not **/
     check_result();
 
-    volatile unsigned int elapsed = getElapsedTime();
+#ifdef msp432p401r
+  volatile unsigned int elapsed = getElapsedTime();
+#endif
+#ifdef adafruitm0express
+  /** Calculate the elapsed time **/
+  finished = micros();
+  elapsed = finished - start;
+  Serial.print("Time taken by the task: ");
+  Serial.println(elapsed);
+  
+  // wait a second so as not to send massive amounts of data
+  delay(1000);
+#endif
 
-    while (1);
+    // while (1);
 
 }
