@@ -320,7 +320,7 @@ SHA256Guts (SHA256_CTX *sc, const uint32_t *cbuf)
 void
 sha256_update (SHA256_CTX *sc, const void *vdata, uint32_t len)
 {
-  const uint8_t *data = vdata;
+  const uint8_t *data = static_cast<const uint8_t*>(vdata);
   uint32_t bufferBytesLeft;
   uint32_t bytesToCopy;
   int needBurn = 0;
