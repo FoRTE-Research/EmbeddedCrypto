@@ -73,6 +73,7 @@ Next download and apply the serial adapter driver update.
 git clone https://github.com/juliagoda/CH341SER.git
 cd CH341SER
 make
+sudo rmmod ch341
 sudo make load
 ```
 
