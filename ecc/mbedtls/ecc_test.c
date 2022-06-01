@@ -39,25 +39,25 @@
 #include "ecc_test.h"
 #include "../curve.h"
 #include "ecdh.h"
+#include "ecp.h"
 #include "error.h"
 
 mbedtls_ecdh_context ctx_cli, ctx_srv;
-unsigned char *private_a;
-unsigned char *private_b;
-unsigned char *cli_to_srv_x;
-unsigned char *cli_to_srv_y;
-unsigned char *srv_to_cli_x;
-unsigned char *srv_to_cli_y;
+unsigned char *priv_a;
+unsigned char *priv_b;
+unsigned char *cli_to_srv_x_inner;
+unsigned char *cli_to_srv_y_inner;
+unsigned char *srv_to_cli_x_inner;
+unsigned char *srv_to_cli_y_inner;
 
-int mbedtls_init(unsigned char *prv_a, unsigned char *prv_b, unsigned char *cli_srv_x, unsigned char *cli_srv_y, unsigned char *srv_cli_x, unsigned char *srv_cli_y) {
+void mbedtls_init(unsigned char *prv_a, unsigned char *prv_b, unsigned char *cli_srv_x, unsigned char *cli_srv_y, unsigned char *srv_cli_x, unsigned char *srv_cli_y) {
 
-    private_a = prv_a;
-    private_b = prv_b;
-    cli_to_srv_x = cli_srv_x;
-    cli_to_srv_y = cli_srv_y;
-    srv_to_cli_x = srv_cli_x;
-    srv_to_cli_y = srv_cli_y;
-
+    priv_a = prv_a;
+    priv_b = prv_b;
+    cli_to_srv_x_inner = cli_srv_x;
+    cli_to_srv_y_inner = cli_srv_y;
+    srv_to_cli_x_inner = srv_cli_x;
+    srv_to_cli_y_inner = srv_cli_y;
 
     mbedtls_ecdh_init( &ctx_cli );
     mbedtls_ecdh_init( &ctx_srv );
@@ -67,36 +67,37 @@ int mbedtls_init(unsigned char *prv_a, unsigned char *prv_b, unsigned char *cli_
                                   ELLIPTIC_CURVE ); // Index in the list of well-known domain parameters
 
     mbedtls_mpi_read_binary( &ctx_cli.d,   // Destination MPI
-                             private_a,    // Input buffer
+                             priv_a,    // Input buffer
                              BUF_BYTES );     // Input buffer size
     mbedtls_mpi_read_binary( &ctx_cli.Q.X,   // Destination MPI
-                             cli_to_srv_x,    // Input buffer
+                             cli_to_srv_x_inner,    // Input buffer
                              BUF_BYTES );     // Input buffer size
     mbedtls_mpi_read_binary( &ctx_cli.Q.Y,   // Destination MPI
-                             cli_to_srv_y,    // Input buffer
+                             cli_to_srv_y_inner,    // Input buffer
                              BUF_BYTES );     // Input buffer size
 
     mbedtls_ecp_group_load( &ctx_srv.grp, ELLIPTIC_CURVE );
 
     mbedtls_mpi_read_binary( &ctx_srv.d,   // Destination MPI
-                             private_b,    // Input buffer
+                             priv_b,    // Input buffer
                              BUF_BYTES );     // Input buffer size
     mbedtls_mpi_read_binary( &ctx_srv.Q.X,   // Destination MPI
-                             srv_to_cli_x,    // Input buffer
+                             srv_to_cli_x_inner,    // Input buffer
                              BUF_BYTES );     // Input buffer size
     mbedtls_mpi_read_binary( &ctx_srv.Q.Y,   // Destination MPI
-                             srv_to_cli_y,    // Input buffer
+                             srv_to_cli_y_inner,    // Input buffer
                              BUF_BYTES );     // Input buffer size
 
     // Set the Z component of the peer's public value (public key) to 1
     mbedtls_mpi_lset( &ctx_srv.Qp.Z,1 );            // Value to use
 
     // Set the X component of the peer's public value based on what was passed from client in the buffer
-    mbedtls_mpi_read_binary( &ctx_srv.Qp.X, cli_to_srv_x, BUF_BYTES );     // Input buffer size
+    mbedtls_mpi_read_binary( &ctx_srv.Qp.X, cli_to_srv_x_inner, BUF_BYTES );     // Input buffer size
 
     // Set the Y component of the peer's public value based on what was passed from client in the buffer
-    mbedtls_mpi_read_binary( &ctx_srv.Qp.Y, cli_to_srv_y, BUF_BYTES );     // Input buffer size
+    mbedtls_mpi_read_binary( &ctx_srv.Qp.Y, cli_to_srv_y_inner, BUF_BYTES );     // Input buffer size
 }
+
 int mbedtls_compute_shared()
 {
     int ret;
@@ -111,9 +112,9 @@ int mbedtls_compute_shared()
 
     mbedtls_mpi_lset( &ctx_cli.Qp.Z, 1 );
 
-    mbedtls_mpi_read_binary( &ctx_cli.Qp.X, srv_to_cli_x, BUF_BYTES );
+    mbedtls_mpi_read_binary( &ctx_cli.Qp.X, srv_to_cli_x_inner, BUF_BYTES );
 
-    mbedtls_mpi_read_binary( &ctx_cli.Qp.Y, srv_to_cli_y, BUF_BYTES );
+    mbedtls_mpi_read_binary( &ctx_cli.Qp.Y, srv_to_cli_y_inner, BUF_BYTES );
 
 
     mbedtls_ecdh_compute_shared( &ctx_cli.grp, &ctx_cli.z, &ctx_cli.Qp, &ctx_cli.d, NULL, NULL);
