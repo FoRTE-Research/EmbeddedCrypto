@@ -52,12 +52,31 @@
 #include "navin/rsa.c"
 #endif
 #ifdef bearssl_rsa
-//#include the header files needed for bearssl_sha here
+//#include "bearssl/bearssl_rsa.h"
 #include "bearssl/bearssl.h"
 #include "bearssl/inner.h"
+#include "bearssl/rsa_i15_oaep_encrypt.c"
+#include "bearssl/rsa_oaep_pad.c"
+#include "bearssl/mgf1.c"
+#include "bearssl/rsa_i15_pub.c"
+#include "bearssl/i15_decode.c"
+#include "bearssl/i15_bitlen.c"
+#include "bearssl/i15_ninv15.c"
+#include "bearssl/i15_decmod.c"
+#include "bearssl/i15_modpow2.c"
+#include "bearssl/i15_tmont.c"
+#include "bearssl/i15_muladd.c"
+#include "bearssl/i15_encode.c"
+#include "bearssl/i15_add.c"
+#include "bearssl/i15_sub.c"
+#include "bearssl/i15_fmont.c"
+#include "bearssl/i15_montmul.c"
+#include "bearssl/ccopy.c"
+#include "bearssl/sha1.c"
+#include "bearssl/enc32be.c"
+#include "bearssl/dec32be.c"
 #endif
 #ifdef  mbedtls_rsa
-//#include the header files needed for mbedtls_rsa here
 #include "mbedtls/pk.h"
 #endif
 
