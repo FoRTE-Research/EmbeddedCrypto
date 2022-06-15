@@ -38,7 +38,24 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 #include <string.h> // CBC mode, for memset
 #include <stdio.h>
 #include "aes.h"
-#include "test.h"
+#include "../test.h"
+
+/*****************************************************************************/
+/* Defines:                                                                  */
+/*****************************************************************************/
+// The number of columns comprising a state in AES. This is a constant in AES. Value=4
+#define Nb 4
+
+#if defined(AES_256) && (AES_256 == 1)
+    #define Nk 8
+    #define Nr 14
+#elif defined(AES_192) && (AES_192 == 1)
+    #define Nk 6
+    #define Nr 12
+#elif defined(AES_128) && (AES_128 == 1)
+    #define Nk 4        // The number of 32 bit words in a key.
+    #define Nr 10       // The number of rounds in AES Cipher.
+#endif
 
 // jcallan@github points out that declaring Multiply as a function 
 // reduces code size considerably with the Keil ARM compiler.
