@@ -553,7 +553,7 @@
  *
  * Enable Xor-encrypt-xor with ciphertext stealing mode (XTS) for AES.
  */
-#define MBEDTLS_CIPHER_MODE_XTS
+// #define MBEDTLS_CIPHER_MODE_XTS
 
 /**
  * \def MBEDTLS_CIPHER_NULL_CIPHER
@@ -1821,7 +1821,7 @@
  *
  * This modules adds support for the AES-NI instructions on x86-64
  */
-//#define MBEDTLS_AESNI_Cs
+#define MBEDTLS_AESNI_C
 
 /**
  * \def MBEDTLS_AES_C
