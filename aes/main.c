@@ -26,18 +26,15 @@
 
 #ifdef tiny_aes
 #include "tiny_aes/aes.h"
-#include "tiny_aes/aes.c" // For Adafruit M0 Metro Express
 #endif
 
 #ifdef slow_tiny_aes
 #include "slow_tiny_aes/aes.h"
-#include "slow_tiny_aes/aes.c" // For Adafruit M0 Metro Express
 #endif
 
 #ifdef mbedtls_aes
 #include "mbedtls/aes.h"
 #endif
-
 
 /** Globals (test inputs) **/
 uint8_t key[] = { 0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73,
@@ -46,6 +43,8 @@ uint8_t key[] = { 0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73,
                   0xdf, 0xf4 };
 uint8_t check_encrypt[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c,
                             0x06, 0x4b, 0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8 };
+uint8_t check_decrypt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96,
+                            0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
 #ifdef AES_CBC
 uint8_t pt[MSG_LNGTH];
 uint8_t ct[MSG_LNGTH];
@@ -149,9 +148,18 @@ void test_decrypt()
 #endif
 }
 
-int check_result()
+int check_result(char *p)
 {
-    return memcmp((char*) pt, (char*) check_encrypt, 16);
+    char *process = p;
+
+    if (strcmp(process, "e"))
+    { // If the process is encryption
+        return memcmp((char*) pt, (char*) check_encrypt, MSG_LNGTH);
+    }
+    else
+    {
+        return memcmp((char*) check_decrypt, (char*) ct, MSG_LNGTH); // If the process is decryption
+    }
 }
 
 #ifdef AES_CBC
@@ -202,52 +210,27 @@ void aes_decrypt_cbc(size_t length) {
 }
 #endif
 
-/** Set up the timer for Adafruit Metro M0 Express **/
-void setup() {
-  Serial.begin(9600);
+void main(void)
+{
+    board_init();
+
+    startTimer();
+
+    /** initialize AES **/
+    init_aes();
+
+    /** Choose the function to be called **/
+    /** Encrypt or decrypt possibly many times **/
+    //test_encrypt();
+    test_decrypt();
+    //aes_encrypt_cbc(sizeof(pt));
+    //aes_decrypt_cbc(sizeof(ct));
+
+    /** Check the result to see whether AES algorithm is correctly working or not **/
+    //check_result("e"); // Check the validity of an encryption method
+    check_result("d"); // Check the validity of a decryption method
+
+    volatile unsigned int elapsed = getElapsedTime();
+
+    while (1);
 }
-
-void main(void) {
-#ifdef msp432p401r
-  /** Initialize the board **/
-  board_init();
-
-  /** Starting the timer to measure elapsed time **/
-  startTimer();
-#endif
-#ifdef adafruitm0express
-  /** Measure the starting time **/
-  setup();
-  unsigned long start, finished, elapsed;
-  start = micros();
-#endif
-  
-  /** initialize AES **/
-  init_aes();
-
-  /** Choose the function to be called **/
-  /** Encrypt or decrypt possibly many times **/
-  /** test aes **/
-  test_encrypt();
-  //test_decrypt();
-
-  /** Check the result to see whether RSA algorithm is correctly working or not **/
-  check_result();
-  
-#ifdef msp432p401r
-  volatile unsigned int elapsed = getElapsedTime();
-#endif
-#ifdef adafruitm0express
-  /** Calculate the elapsed time **/
-  finished = micros();
-  elapsed = finished - start;
-  Serial.print("Time taken by the task: ");
-  Serial.println(elapsed);
-  
-  // wait a second so as not to send massive amounts of data
-  delay(1000);
-#endif
-
-  //  while (1);
-}
-
