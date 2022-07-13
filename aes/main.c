@@ -154,7 +154,7 @@ void test_decrypt()
  *
  ******************************/
 int check_encrypt() {
-    return memcmp((char*) ct, (char*) expected_ct, MSG_LNGTH);
+    return memcmp((char*) ct, (char*) expected_ct, sizeof(expected_ct));
 }
 
 /******************************
@@ -163,7 +163,7 @@ int check_encrypt() {
  *
  ******************************/
 int check_decrypt() {
-    return memcmp((char*) expected_pt, (char*) pt, MSG_LNGTH);
+    return memcmp((char*) expected_pt, (char*) pt, sizeof(expected_ct));
 }
 
 #ifdef AES_CBC
@@ -214,8 +214,7 @@ void aes_decrypt_cbc(size_t length) {
 }
 #endif
 
-void main(void)
-{
+void main(void) {
     board_init();
 
     startTimer();
@@ -231,8 +230,8 @@ void main(void)
     //aes_decrypt_cbc(sizeof(ct));
 
     /** Check the result to see whether AES algorithm is correctly working or not **/
-    check_encrypt(); // Check the validity of an encryption method
-    //check_decrypt(); // Check the validity of a decryption method
+    volatile unsigned int verify = check_encrypt(); // Check the validity of an encryption method
+    //volatile unsigned int verify = check_decrypt(); // Check the validity of a decryption method
 
     volatile unsigned int elapsed = getElapsedTime();
 
