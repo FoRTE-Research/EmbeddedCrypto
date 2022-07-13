@@ -1,12 +1,11 @@
 /** need to choose which SHA implementation to run **/
-// #define gladman_sha
-#define saddi_sha
-// #define mbedtls_sha
+//#define gladman_sha
+//#define saddi_sha
+#define mbedtls_sha
 
 /** need to uncomment if the board you are using is MSP432P401R **/
-// #define msp432p401r
+#define msp432p401r
 //#define riscv
-#define adafruitm0express
 
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
 #ifdef msp432p401r
@@ -33,16 +32,13 @@
 #include <memory.h>
 #include <ctype.h>
 #include "gladman/sha2.h"
-#include "gladman/sha2.c"
 #endif
 #ifdef saddi_sha
 #include "saddi/sha256.h"
-#include "saddi/sha256.c"
 #include <stdlib.h>
 #endif
 #ifdef mbedtls_sha
 #include "mbedtls/sha256.h"
-#include "mbedtls/sha256.c"
 #endif
 
 #define DIGEST_BYTES (256/8)
@@ -51,7 +47,7 @@
 unsigned char hval[DIGEST_BYTES];
 unsigned char data[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnop"; // Data you want to hash
 unsigned char check_sha256[] =
-        "aa353e009edbaebfc6e494c8d847696896cb8b398e0173a4b5c1b636292d87c7";
+        "aa353e009edbaebfc6e494c8d847696896cb8b398e0173a4b5c1b636292d87c7"; // Used to verify the hash function
 size_t len = sizeof(data);
 
 /** contexts **/
@@ -79,21 +75,19 @@ void init_sha()
 #endif
 }
 
-void test_sha256()
+int test_sha256()
 {
 #ifdef gladman_sha
     sha256(hval, data, len, cx);
-    // hval now contains SHA256(data)
 #endif
 #ifdef saddi_sha
-    uint8_t hash[SHA256_HASH_SIZE];
     sha256_update (&ctx, data, len);
-    sha256_final (&ctx, hash);
+    sha256_final (&ctx, hval);
 #endif
 #ifdef mbedtls_sha
     mbedtls_sha256(data, len, hval, 0, ctx);
-    // hval now contains SHA256(data)
 #endif
+// hval now contains the output of SHA-256
 }
 
 int check_result()
@@ -101,25 +95,10 @@ int check_result()
     return memcmp((char*) hval, (char*) check_sha256, DIGEST_BYTES);
 }
 
-/** Setting up SysTick timer for Adafruit Metro M0 Express **/
-void setup() {
-  Serial.begin(9600);
-}
+int main(int argc, char *argv[]) {
+    board_init();
 
-void main() {
-#ifdef msp432p401r
-  /** Initialize the board **/
-  board_init();
-
-  /** Starting the timer to measure elapsed time **/
-  startTimer();
-#endif
-#ifdef adafruitm0express
-  /** Measure the starting time **/
-  setup();
-  unsigned long start, finished, elapsed;
-  start = micros();
-#endif
+    startTimer();
 
     /** initialize SHA **/
     init_sha();
@@ -128,22 +107,9 @@ void main() {
     test_sha256();
 
     /** Check the result to see whether SHA algorithm is correctly working or not **/
-    check_result();
+    volatile unsigned int verify = check_result();
 
-#ifdef msp432p401r
-  volatile unsigned int elapsed = getElapsedTime();
-#endif
-#ifdef adafruitm0express
-  /** Calculate the elapsed time **/
-  finished = micros();
-  elapsed = finished - start;
-  Serial.print("Time taken by the task: ");
-  Serial.println(elapsed);
-  
-  // wait a second so as not to send massive amounts of data
-  delay(1000);
-#endif
+    volatile unsigned int elapsed = getElapsedTime();
 
-    // while (1);
-
+    while (1);
 }
