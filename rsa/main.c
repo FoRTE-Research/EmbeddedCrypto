@@ -372,7 +372,7 @@ void test_encrypt()
 #endif
 }
 
-void test_encrypt()
+void test_decrypt()
 {
 #ifdef tiny_rsa
 #endif
