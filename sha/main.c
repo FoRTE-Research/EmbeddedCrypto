@@ -1,7 +1,7 @@
 /** need to choose which SHA implementation to run **/
-//#define gladman_sha
+#define gladman_sha
 //#define saddi_sha
-#define mbedtls_sha
+//#define mbedtls_sha
 
 /** need to uncomment if the board you are using is MSP432P401R **/
 #define msp432p401r
@@ -44,10 +44,12 @@
 #define DIGEST_BYTES (256/8)
 
 /** Globals (test inputs) **/
-unsigned char hval[DIGEST_BYTES];
-unsigned char data[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnop"; // Data you want to hash
-unsigned char check_sha256[] =
-        "aa353e009edbaebfc6e494c8d847696896cb8b398e0173a4b5c1b636292d87c7"; // Used to verify the hash function
+unsigned char data[] = "abc"; // Data you want to hash
+unsigned char check_sha256[] = { 220, 17, 20, 205, 7, 73, 20, 189, 135, 44, 193,
+                                 249, 162, 62, 201, 16, 234, 34, 3, 188, 121,
+                                 119, 154, 178, 225, 125, 162, 87, 130, 166, 36,
+                                 252 }; // Used to verify the hash function
+uint8_t hash[DIGEST_BYTES]; // the output of SHA256 will be stored here
 size_t len = sizeof(data);
 
 /** contexts **/
@@ -55,10 +57,10 @@ size_t len = sizeof(data);
 sha256_ctx cx[1];
 #endif
 #ifdef saddi_sha
-    SHA256_CTX ctx;
+SHA256_CTX ctx;
 #endif
 #ifdef mbedtls_sha
-    mbedtls_sha256_context ctx;
+mbedtls_sha256_context ctx;
 #endif
 
 /** Call initialization functions for different SHA implementations **/
@@ -68,37 +70,43 @@ void init_sha()
     sha256_begin(cx);
 #endif
 #ifdef saddi_sha
-    sha256_init (&ctx);
+    sha256_init(&ctx);
 #endif
 #ifdef mbedtls_aes
     mbedtls_sha256_init(&ctx);
 #endif
 }
 
-int test_sha256()
+void test_sha256()
 {
 #ifdef gladman_sha
-    sha256(hval, data, len, cx);
+    sha256(hash, data, len, cx);
 #endif
 #ifdef saddi_sha
-    sha256_update (&ctx, data, len);
-    sha256_final (&ctx, hval);
+    sha256_update(&ctx, data, len);
+    sha256_final(&ctx, hash);
 #endif
 #ifdef mbedtls_sha
-    mbedtls_sha256(data, len, hval, 0, ctx);
+    mbedtls_sha256(data, len, hash, 0, ctx);
 #endif
-// hval now contains the output of SHA-256
+// hash now contains the output of SHA-256
 }
 
 int check_result()
 {
-    return memcmp((char*) hval, (char*) check_sha256, DIGEST_BYTES);
+    return memcmp((uint8_t*) hash, (uint8_t*) check_sha256, DIGEST_BYTES);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
+
+#ifdef msp432p401r
+    /** Initialize the board **/
     board_init();
 
+    /** Starting the timer to measure elapsed time **/
     startTimer();
+#endif
 
     /** initialize SHA **/
     init_sha();
@@ -109,7 +117,10 @@ int main(int argc, char *argv[]) {
     /** Check the result to see whether SHA algorithm is correctly working or not **/
     volatile unsigned int verify = check_result();
 
+#ifdef msp432p401r
     volatile unsigned int elapsed = getElapsedTime();
+#endif
 
     while (1);
+
 }
