@@ -5,13 +5,14 @@
  ***************/
 
 /** need to choose which RSA implementation to run **/
-//#define tiny_rsa
-#define codebase
+#define tiny_rsa
+//#define codebase
 //#define navin
 //#define bearssl_rsa
 
 /** MbedTLS RSA is still being debugged **/
 //#define mbedtls_rsa
+
 /** need to uncomment if the board you are using is MSP432P401R **/
 #define msp432p401r
 //#define riscv
@@ -50,6 +51,7 @@
 #ifdef bearssl_rsa
 #include "bearssl/bearssl.h"
 #include "bearssl/inner.h"
+#include "bearssl/bearssl_rsa.h"
 #endif
 #ifdef  mbedtls_rsa
 #include "mbedtls/pk.h"
@@ -66,15 +68,15 @@ char private[257] =
         "3f5cc8956a6bf773e598604faf71097e265d5d55560c038c0bdb66ba222e20ac80f69fc6f93769cb795440e2037b8d67898d6e6d9b6f180169fc6348d5761ac9e81f6b8879529bc07c28dc92609eb8a4d15ac4ba3168a331403c689b1e82f62518c38601d58fd628fcb7009f139fb98e61ef7a23bee4e3d50af709638c24133d";
 char cipher[257] =
         "1cb1c5e45e584cb1b627cac7b0de0812dac7c1d1638785a7660f6772d219f62aa0ce3e8a853abadebe0a293d76a17d321da8b1fd25ddf807ce96006f73a0aed014b990d6025c42b6c216d8553b66e724270b6dbd654d55e368edeacbc8da30f0cbe5ccbb72a3fe44d29543a5bbb5255a404234ce53bf70f52a78170685a6e391";
-int plain_text = 54321;
+int plaintext = 54321;
 
 #endif
 #ifdef codebase
 
-huge_t rsaOrig, rsaDecrypted, rsaEncrypted;
-rsaPubKey_t publicKey;
-rsaPriKey_t privateKey;
-int i;
+uint64_t plaintext = 54321;
+char cipher[257] =
+        "1cb1c5e45e584cb1b627cac7b0de0812dac7c1d1638785a7660f6772d219f62aa0ce3e8a853abadebe0a293d76a17d321da8b1fd25ddf807ce96006f73a0aed014b990d6025c42b6c216d8553b66e724270b6dbd654d55e368edeacbc8da30f0cbe5ccbb72a3fe44d29543a5bbb5255a404234ce53bf70f52a78170685a6e391";
+uint64_t rsaDecrypted, rsaEncrypted;
 
 #endif
 #ifdef navin
@@ -148,7 +150,7 @@ size_t check_result_len;
 //    char pub[] = "a15f36fc7f8d188057fc51751962a5977118fa2ad4ced249c039ce36c8d1bd275273f1edd821892fa75680b1ae38749fff9268bf06b3c2af02bbdb52a0d05c2ae2384aa1002391c4b16b87caea8296cfd43757bb51373412e8fe5df2e56370505b692cf8d966e3f16bc62629874a0464a9710e4a0718637a68442e0eb1648ec5";
 //    char pri[] = "3f5cc8956a6bf773e598604faf71097e265d5d55560c038c0bdb66ba222e20ac80f69fc6f93769cb795440e2037b8d67898d6e6d9b6f180169fc6348d5761ac9e81f6b8879529bc07c28dc92609eb8a4d15ac4ba3168a331403c689b1e82f62518c38601d58fd628fcb7009f139fb98e61ef7a23bee4e3d50af709638c24133d";
 //    char cip[] = "1cb1c5e45e584cb1b627cac7b0de0812dac7c1d1638785a7660f6772d219f62aa0ce3e8a853abadebe0a293d76a17d321da8b1fd25ddf807ce96006f73a0aed014b990d6025c42b6c216d8553b66e724270b6dbd654d55e368edeacbc8da30f0cbe5ccbb72a3fe44d29543a5bbb5255a404234ce53bf70f52a78170685a6e391";
-//    plain_text = 54321;
+//    plaintext = 54321;
 //
 //    for(int i = 0; i < strlen(pub); i++) {
 //        public[i] = pub[i];
@@ -162,6 +164,21 @@ size_t check_result_len;
 //        cipher[i] = cip[i];
 //    }
 //    int a = 0;
+#endif
+#ifdef codebase
+
+// Values based on 64-bit math (huge_t = uint64_t)
+// which will result in more secure encryption, but also
+// increases the size of the encrypted text
+
+rsaPubKey_t publicKey = {21, 16484947};
+rsaPriKey_t privateKey = {15689981, 16484947};
+
+//publicKey.e = 21;
+//publicKey.n = 16484947;
+//privateKey.d = 15689981;
+//privateKey.n = 16484947;
+
 #endif
 #ifdef navin
 
@@ -289,20 +306,15 @@ static void rng_fake_update(rng_fake_ctx *cc, const void *src, size_t len)
 void test_encrypt()
 {
 #ifdef tiny_rsa
-    rsa1024_encrypt(public, private, resultBuffer, plain_text);
+    rsa1024_encrypt(public, private, resultBuffer, plaintext);
 #endif
 #ifdef codebase
-    // Values based on 64-bit math (huge_t = uint64_t)
-    // which will result in more secure encryption, but also
-    // increases the size of the encrypted text
-    publicKey.e = 21;
-    publicKey.n = 16484947;
-
-    for (i = 0; i < 128; i++)
-    {
-        rsaOrig = i;
-        rsaEncrypt(rsaOrig, &rsaEncrypted, publicKey);
-    }
+    rsaEncrypt(plaintext, &rsaEncrypted, publicKey);
+//    for (i = 0; i < 128; i++)
+//    {
+//        rsaOrig = i;
+//        rsaEncrypt(rsaOrig, &rsaEncrypted, publicKey);
+//    }
 #endif
 #ifdef navin
     // Encrypt
@@ -375,16 +387,14 @@ void test_encrypt()
 void test_decrypt()
 {
 #ifdef tiny_rsa
+    rsa1024_decrypt(public, private, resultBuffer, cipher);
 #endif
 #ifdef codebase
-    privateKey.d = 15689981;
-    privateKey.n = 16484947;
-
-    for (i = 0; i < 128; i++)
-    {
-        rsaOrig = i;
-        rsaDecrypt(ciphertext, &rsaDecrypted, privateKey);
-    }
+    rsaDecrypt(cipher, &rsaDecrypted, privateKey);
+//    for (i = 0; i < 128; i++) {
+//        rsaOrig = i;
+//        rsaDecrypt(ciphertext, &rsaDecrypted, privateKey);
+//    }
 #endif
 #ifdef navin
 #endif
@@ -392,12 +402,21 @@ void test_decrypt()
 #endif
 }
 
-int check_result()
+int check_encrypt()
 {
 #if defined(tiny_rsa)
-    return memcmp((char*) cipher, (char*) resultBuffer, strlen(cipher));
+    return memcmp((char*) cipher, (char*) resultBuffer, sizeof(cipher));
 #elif defined(bearssl_rsa)
     return memcmp((char*) cipher, (char*) resultBuffer, check_result_len);
+#elif defined(codebase)
+    return memcmp((char*) cipher, (char*) rsaEncrypted, sizeof(cipher));
+#endif
+}
+
+int check_decrypt()
+{
+#if defined(tiny_rsa)
+    return memcmp((char*) plaintext, (char*) resultBuffer, sizeof(plaintext));
 #endif
 }
 
@@ -413,15 +432,16 @@ void main(void)
 #endif
 
     /** test rsa **/
-    test_encrypt();
-    //test_decrypt();
+//    test_encrypt();
+    test_decrypt();
 
     /** Check the result to see whether RSA algorithm is correctly working or not **/
-    volatile unsigned int verify = check_result();
+    volatile unsigned int verify = check_encrypt();
 
 #ifdef msp432p401r
     volatile unsigned int elapsed = getElapsedTime();
 #endif
 
     while (1);
+
 }
