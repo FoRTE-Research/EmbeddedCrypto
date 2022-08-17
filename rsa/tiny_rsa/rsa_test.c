@@ -35,10 +35,10 @@ void pow_mod_faster(struct bn* a, struct bn* b, struct bn* n, struct bn* res)
     }
 }
 
-void rsa1024_encrypt(char *publickey, char *privatekey, char *buff, int x)
+void rsa1024_encrypt(char *public, char *private, char *buf, int x)
 {
 
-    char buf[1024];
+//    char buf[1024];
 
     struct bn n; /* public  key */
     struct bn d; /* private key */
@@ -46,8 +46,8 @@ void rsa1024_encrypt(char *publickey, char *privatekey, char *buff, int x)
     struct bn m; /* clear text message */
     struct bn c; /* cipher text */
 
-    //int len_pub = strlen(public);
-    //int len_prv = strlen(private);
+//    int len_pub = strlen(public);
+//    int len_prv = strlen(private);
 
     bignum_init(&n);
     bignum_init(&d);
@@ -55,8 +55,8 @@ void rsa1024_encrypt(char *publickey, char *privatekey, char *buff, int x)
     bignum_init(&m);
     bignum_init(&c);
 
-    bignum_from_string(&n, publickey,  256);
-    bignum_from_string(&d, privatekey, 256);
+    bignum_from_string(&n, public,  256);
+    bignum_from_string(&d, private, 256);
     bignum_from_int(&e, 65537);
     bignum_init(&m);
     bignum_init(&c);
@@ -70,10 +70,10 @@ void rsa1024_encrypt(char *publickey, char *privatekey, char *buff, int x)
 
 }
 
-void rsa1024_decrypt(char *publickey, char *privatekey, char *buff, int x)
+void rsa1024_decrypt(char *public, char *private, char* buf, char *cipher) // char *buff, int x)
 {
 
-    char buf[1024];
+    //char buf[1024];
 
     struct bn n; /* public  key */
     struct bn d; /* private key */
@@ -90,27 +90,11 @@ void rsa1024_decrypt(char *publickey, char *privatekey, char *buff, int x)
     bignum_init(&m);
     bignum_init(&c);
 
-    bignum_from_string(&n, publickey,  256);
-    bignum_from_string(&d, privatekey, 256);
+    bignum_from_string(&n, public,  256);
+    bignum_from_string(&d, private, 256);
+    bignum_from_string(&c, cipher, strlen(cipher));
     bignum_from_int(&e, 65537);
-    bignum_init(&m);
-    bignum_init(&c);
-
-    bignum_from_int(&m, x);
-    bignum_to_string(&m, buf, sizeof(buf));
-
-    /** Decrypting **/
-    int i = 0;
-    while (buf[i] != 0)
-    {
-        buff[i] = buf[i];
-        i += 1;
-    }
-
-    /* Clear m */
-    bignum_init(&m);
 
     pow_mod_faster(&c, &d, &n, &m);
-
     bignum_to_string(&m, buf, sizeof(buf));
 }
