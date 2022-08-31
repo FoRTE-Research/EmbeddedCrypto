@@ -39,9 +39,6 @@ void rsa1024_encrypt(char *public, char *private, char *buff, int x)
 {
 
     char buf[8192];
-    for(int j = 1; j < sizeof(buff); j++) {
-        buf[j] = buff[j];
-    }
 
     struct bn n; /* public  key */
     struct bn d; /* private key */
@@ -77,17 +74,13 @@ void rsa1024_encrypt(char *public, char *private, char *buff, int x)
 
 }
 
-void rsa1024_decrypt(char *public, char *private, char* buff, char *cipher)
+void rsa1024_decrypt(char *public, char *private, char *buff, char *cipher)
 {
 
     char buf[8192];
-    for(int j = 1; j < sizeof(buff); j++) {
-        buf[j] = buff[j];
-    }
 
     struct bn n; /* public  key */
     struct bn d; /* private key */
-    struct bn e; /* public exponent */
     struct bn m; /* clear text message */
     struct bn c; /* cipher text */
 
@@ -96,14 +89,12 @@ void rsa1024_decrypt(char *public, char *private, char* buff, char *cipher)
 
     bignum_init(&n);
     bignum_init(&d);
-    bignum_init(&e);
     bignum_init(&m);
     bignum_init(&c);
 
     bignum_from_string(&n, public,  256);
     bignum_from_string(&d, private, 256);
-    bignum_from_string(&c, cipher, sizeof(cipher));
-    bignum_from_int(&e, 65537);
+    bignum_from_string(&c, cipher, 256);
 
     pow_mod_faster(&c, &d, &n, &m);
     bignum_to_string(&m, buf, sizeof(buf));
