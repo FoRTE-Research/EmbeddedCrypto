@@ -532,7 +532,7 @@ int mbedtls_pk_verify_ext( mbedtls_pk_type_t type, const void *options,
  */
 int mbedtls_pk_sign( mbedtls_pk_context *ctx, mbedtls_md_type_t md_alg,
              const unsigned char *hash, size_t hash_len,
-             unsigned char *sig, size_t sig_size, size_t *sig_len,
+             unsigned char *sig, size_t *sig_len,
              int (*f_rng)(void *, unsigned char *, size_t), void *p_rng );
 
 /**
@@ -567,7 +567,7 @@ int mbedtls_pk_sign( mbedtls_pk_context *ctx, mbedtls_md_type_t md_alg,
 int mbedtls_pk_sign_restartable( mbedtls_pk_context *ctx,
              mbedtls_md_type_t md_alg,
              const unsigned char *hash, size_t hash_len,
-             unsigned char *sig, size_t sig_size, size_t *sig_len,
+             unsigned char *sig, size_t *sig_len,
              int (*f_rng)(void *, unsigned char *, size_t), void *p_rng,
              mbedtls_pk_restart_ctx *rs_ctx );
 
@@ -631,9 +631,7 @@ int mbedtls_pk_encrypt( mbedtls_pk_context *ctx,
  * \return          Another non-zero value if the keys do not match.
  */
 int mbedtls_pk_check_pair( const mbedtls_pk_context *pub,
-                           const mbedtls_pk_context *prv,
-                           int (*f_rng)(void *, unsigned char *, size_t),
-                           void *p_rng );
+                           const mbedtls_pk_context *prv);
 
 /**
  * \brief           Export debug information
