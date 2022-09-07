@@ -9,9 +9,8 @@
 //#define codebase
 //#define navin
 //#define bearssl_rsa
-
-/** MbedTLS RSA is still being debugged **/
 //#define mbedtls_rsa
+
 /** need to uncomment if the board you are using is MSP432P401R **/
 #define msp432p401r
 //#define riscv
@@ -53,11 +52,23 @@
 #include "bearssl/bearssl_rsa.h"
 #endif
 #ifdef  mbedtls_rsa
-#include "mbedtls/pk.h"
+#include <rsa/mbedtls-copy/pk.h>
 #endif
 
 /** Globals (test inputs) **/
 //define the global variables here
+#ifdef mbedtls_rsa
+
+char resultBuffer[8192];
+char public[] =
+        "a15f36fc7f8d188057fc51751962a5977118fa2ad4ced249c039ce36c8d1bd275273f1edd821892fa75680b1ae38749fff9268bf06b3c2af02bbdb52a0d05c2ae2384aa1002391c4b16b87caea8296cfd43757bb51373412e8fe5df2e56370505b692cf8d966e3f16bc62629874a0464a9710e4a0718637a68442e0eb1648ec5";
+char private[] =
+        "3f5cc8956a6bf773e598604faf71097e265d5d55560c038c0bdb66ba222e20ac80f69fc6f93769cb795440e2037b8d67898d6e6d9b6f180169fc6348d5761ac9e81f6b8879529bc07c28dc92609eb8a4d15ac4ba3168a331403c689b1e82f62518c38601d58fd628fcb7009f139fb98e61ef7a23bee4e3d50af709638c24133d";
+char cipher[] =
+        "1cb1c5e45e584cb1b627cac7b0de0812dac7c1d1638785a7660f6772d219f62aa0ce3e8a853abadebe0a293d76a17d321da8b1fd25ddf807ce96006f73a0aed014b990d6025c42b6c216d8553b66e724270b6dbd654d55e368edeacbc8da30f0cbe5ccbb72a3fe44d29543a5bbb5255a404234ce53bf70f52a78170685a6e391";
+int plaintext = 54321;
+
+#endif
 #ifdef tiny_rsa
 
 char resultBuffer[8192];
@@ -79,41 +90,14 @@ uint64_t rsaDecrypted, rsaEncrypted;
 #endif
 #ifdef navin
 
-//uint64_t x[20] =
-//{   0}, y[20] =
-//{   0}, z[20] =
-//{   0}, e[18] =
-//{   0};
-//
-//int i;
-//uint8_t data[150] =
-//{   0xbc, 0xd8, 0xb9, 0x11, 0x5b, 0x57, 0xc6, 0x8f, 0x90,
-//    0xc2, 0xed, 0x97, 0x62, 0x84, 0x2e, 0x21, 0x99, 0x4c,
-//    0xb0, 0x2d, 0xe5, 0x75, 0x9f, 0x87, 0x38, 0x23, 0xad,
-//    0xa4, 0x74, 0xdb, 0x16, 0x5a, 0x29, 0x39, 0xd8, 0xad,
-//    0x21, 0xcb, 0x9c, 0x7b, 0xbc, 0x99, 0xc2, 0x83, 0x5e,
-//    0x0d, 0x7c, 0xd6, 0xc5, 0x29, 0xd2, 0xd0, 0x71, 0xf6,
-//    0xa5, 0x42, 0xc9, 0xe0, 0x5c, 0x5c, 0xe2, 0xa3, 0x91,
-//    0x9b, 0x1a, 0x2d, 0x60, 0x14, 0x0b, 0x7c, 0x0a, 0xfd,
-//    0x54, 0x5f, 0xc7, 0xc1, 0x0c, 0xeb, 0xe9, 0x59, 0x23,
-//    0x51, 0xf0, 0x3e, 0x95, 0x8f, 0xcf, 0xf6, 0x43, 0xcc,
-//    0x08, 0xf4, 0x58, 0x62, 0xcc, 0xe9, 0x49, 0x6a, 0x46,
-//    0xb6, 0x5a, 0x72, 0xb4, 0x0c, 0x38, 0xf0, 0xc0, 0x82,
-//    0xd7, 0x2e, 0xf9, 0x9e, 0x97, 0x2d, 0xe6, 0xee, 0xa9,
-//    0xb9, 0xe0, 0xda, 0x9d, 0xaa, 0xe3, 0xd1, 0x32, 0xd9,
-//    0xea, 0xf9};
-
 uint64_t resultBuffer[1024];
-uint64_t public[257];
-uint64_t private[257];
-uint64_t cipher[257];
-char tmp_public[] =
+char public[] =
         "a15f36fc7f8d188057fc51751962a5977118fa2ad4ced249c039ce36c8d1bd275273f1edd821892fa75680b1ae38749fff9268bf06b3c2af02bbdb52a0d05c2ae2384aa1002391c4b16b87caea8296cfd43757bb51373412e8fe5df2e56370505b692cf8d966e3f16bc62629874a0464a9710e4a0718637a68442e0eb1648ec5";
-char tmp_private[] =
+char private[] =
         "3f5cc8956a6bf773e598604faf71097e265d5d55560c038c0bdb66ba222e20ac80f69fc6f93769cb795440e2037b8d67898d6e6d9b6f180169fc6348d5761ac9e81f6b8879529bc07c28dc92609eb8a4d15ac4ba3168a331403c689b1e82f62518c38601d58fd628fcb7009f139fb98e61ef7a23bee4e3d50af709638c24133d";
-char tmp_cipher[] =
+char cipher[] =
         "1cb1c5e45e584cb1b627cac7b0de0812dac7c1d1638785a7660f6772d219f62aa0ce3e8a853abadebe0a293d76a17d321da8b1fd25ddf807ce96006f73a0aed014b990d6025c42b6c216d8553b66e724270b6dbd654d55e368edeacbc8da30f0cbe5ccbb72a3fe44d29543a5bbb5255a404234ce53bf70f52a78170685a6e391";
-uint64_t plaintext = 54321;
+uint8_t plaintext[] = {5, 4, 3, 2, 1};
 
 #endif
 #ifdef bearssl_rsa
@@ -286,43 +270,10 @@ void test_encrypt()
     rsaEncrypt(plaintext, &rsaEncrypted, publicKey);
 #endif
 #ifdef navin
-    // Encrypt
+    uint64_t e[18] = {0};
+    e[0] = 65537;
 
-//    for (i = 0; i < 16; i++) {
-//        x[i] = (uint64_t) rand() * (uint64_t) rand();
-//        y[i] = (uint64_t) rand() * (uint64_t) rand();
-//    }
-//
-//    for (i = 0; i < 64; i++) {
-//        uint8_t temp = data[i];
-//        data[i] = data[127 - i];
-//        data[127 - i] = temp;
-//    }
-//
-//    for (i = 128; i < 150; i++) {
-//        data[i] = 0;
-//    }
-//
-//    e[0] = 0x10001;
-
-
-    //    rsa1024(z, x, e, data); // rsa1024(result, data, exponent, key);
-    for(int i = 0; i < sizeof(tmp_public); i++) {
-        public[i] = (uint64_t) tmp_public[i];
-    }
-
-    for(int i = 0; i < sizeof(tmp_private); i++) {
-        private[i] = (uint64_t) tmp_private[i];
-    }
-
-    for(int i = 0; i < sizeof(tmp_cipher); i++) {
-        cipher[i] = (uint64_t) tmp_cipher[i];
-    }
-    rsa1024(resultBuffer, plaintext, 65537, public);
-//    for (i = 0; i < 10; i++)
-//    {
-//        rsa1024(z, x, e, data);
-//    }
+    rsa1024(resultBuffer, plaintext, public, e);
 #endif
 #ifdef bearssl_rsa
 
@@ -370,6 +321,17 @@ void test_encrypt()
     br_rsa_i15_oaep_encrypt(&rng.vtable, &br_sha1_vtable, NULL, 0, &pk, resultBuffer, sizeof resultBuffer, plain, plain_len);
 
 #endif
+#ifdef mbedtls_rsa
+    size_t olen = 0;
+
+    mbedtls_pk_context pk;
+    mbedtls_pk_init( &pk );
+    mbedtls_pk_parse_public_keyfile( &pk, "our-key.pub" );
+
+    mbedtls_pk_encrypt( &pk, plaintext, sizeof(plaintext),
+                        resultBuffer, &olen, sizeof(resultBuffer),
+                        NULL, NULL );
+#endif
 }
 
 void test_decrypt()
@@ -381,6 +343,10 @@ void test_decrypt()
     rsaDecrypt(cipher, &rsaDecrypted, privateKey);
 #endif
 #ifdef navin
+    uint64_t e[18] = {0};
+    e[0] = 65537;
+
+    rsa1024(resultBuffer, ciphertext, private, e);
 #endif
 #ifdef bearssl_rsa
 
@@ -432,6 +398,17 @@ void test_decrypt()
     br_rsa_i15_oaep_decrypt(&br_sha1_vtable, NULL, 0, &sk, resultBuffer, sizeof resultBuffer);
 
 #endif
+#ifdef mbedtls_rsa
+    size_t olen = 0;
+
+    mbedtls_pk_context pk;
+    mbedtls_pk_init( &pk );
+    mbedtls_pk_parse_public_keyfile( &pk, "our-key.prv" );
+
+    mbedtls_pk_decrypt( &pk, plaintext, sizeof(plaintext),
+                        resultBuffer, &olen, sizeof(resultBuffer),
+                        NULL, NULL );
+#endif
 }
 
 int check_encrypt()
@@ -443,7 +420,7 @@ int check_encrypt()
 #elif defined(codebase)
     return (cipher == rsaEncrypted);
 #elif defined(navin)
-    return 123;
+    return memcmp((char*) cipher, (char*) resultBuffer, sizeof(cipher));
 #endif
 }
 
@@ -456,7 +433,7 @@ int check_decrypt()
 #elif defined(codebase)
     return (plaintext == rsaDecrypted);
 #elif defined(navin)
-    return 123;
+    return memcmp((char*) plaintext, (char*) resultBuffer, sizeof(plaintext));
 #endif
 }
 
@@ -473,17 +450,16 @@ void main(void)
 
     /** test rsa **/
 //    test_encrypt();
-        test_decrypt();
+    test_decrypt();
 
     /** Check the result to see whether RSA algorithm is correctly working or not **/
 //    volatile unsigned int verify = check_encrypt();
-        volatile unsigned int verify = check_decrypt();
+    volatile unsigned int verify = check_decrypt();
 
 #ifdef msp432p401r
     volatile unsigned int elapsed = getElapsedTime();
 #endif
 
-    while (1)
-        ;
+    while (1);
 
 }
