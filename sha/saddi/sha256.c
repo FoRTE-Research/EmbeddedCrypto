@@ -41,13 +41,13 @@
 #include "clamav-config.h"
 #endif /* HAVE_CONFIG_H */
 
-// #if HAVE_INTTYPES_H
-// # include <inttypes.h>
-// #else
-// # if HAVE_STDINT_H
-// # include <stdint.h>
-// # endif
-// #endif
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#else
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif
+#endif
 
 #include <string.h>
 
@@ -317,8 +317,10 @@ SHA256Guts (SHA256_CTX *sc, const uint32_t *cbuf)
   sc->hash[7] += h;
 }
 
-void sha256_update (SHA256_CTX *sc, const void *vdata, uint32_t len) {
-  const uint8_t *data = static_cast<const uint8_t*>(vdata);
+void
+sha256_update (SHA256_CTX *sc, const void *vdata, uint32_t len)
+{
+  const uint8_t *data = vdata;
   uint32_t bufferBytesLeft;
   uint32_t bytesToCopy;
   int needBurn = 0;
