@@ -41,10 +41,11 @@ uint8_t key[] = { 0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73,
                   0xae, 0xf0, 0x85, 0x7d, 0x77, 0x81, 0x1f, 0x35, 0x2c, 0x07,
                   0x3b, 0x61, 0x08, 0xd7, 0x2d, 0x98, 0x10, 0xa3, 0x09, 0x14,
                   0xdf, 0xf4 };
-uint8_t expected_ct[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c,
-                            0x06, 0x4b, 0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8 };
 uint8_t expected_pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96,
                             0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
+uint8_t expected_ct[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c,
+                            0x06, 0x4b, 0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8 };
+
 #ifdef AES_CBC
 uint8_t pt[MSG_LNGTH];
 uint8_t ct[MSG_LNGTH];
@@ -87,6 +88,7 @@ void init_aes()
 #ifdef mbedtls_aes
     mbedtls_aes_init(&ctx);
     mbedtls_aes_setkey_enc(&ctx, key, keysize);
+//    mbedtls_aes_setkey_dec(&ctx, key, keysize);
 #endif
 }
 
@@ -144,7 +146,7 @@ void test_decrypt()
 
     /** MbedTLS AES **/
 #ifdef mbedtls_aes
-    mbedtls_internal_aes_decrypt(&ctx, pt, ct);
+    mbedtls_internal_aes_decrypt(&ctx, ct, pt);
 #endif
 }
 
@@ -154,7 +156,7 @@ void test_decrypt()
  *
  ******************************/
 int check_encrypt() {
-    return memcmp((char*) ct, (char*) expected_ct, sizeof(expected_ct));
+    return memcmp((char*) expected_ct, (char*) ct, sizeof(expected_ct));
 }
 
 /******************************
@@ -163,7 +165,7 @@ int check_encrypt() {
  *
  ******************************/
 int check_decrypt() {
-    return memcmp((char*) expected_pt, (char*) pt, sizeof(expected_ct));
+    return memcmp((char*) expected_pt, (char*) pt, sizeof(expected_pt));
 }
 
 #ifdef AES_CBC
@@ -225,13 +227,13 @@ void main(void) {
     /** Choose the function to be called **/
     /** Encrypt or decrypt possibly many times **/
     test_encrypt();
-    //test_decrypt();
+//    test_decrypt();
     //aes_encrypt_cbc(sizeof(pt));
     //aes_decrypt_cbc(sizeof(ct));
 
     /** Check the result to see whether AES algorithm is correctly working or not **/
     volatile unsigned int verify = check_encrypt(); // Check the validity of an encryption method
-    //volatile unsigned int verify = check_decrypt(); // Check the validity of a decryption method
+//    volatile unsigned int verify = check_decrypt(); // Check the validity of a decryption method
 
     volatile unsigned int elapsed = getElapsedTime();
 
