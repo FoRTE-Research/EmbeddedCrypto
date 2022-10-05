@@ -5,7 +5,7 @@ void SysTick_Handler(void) {
     ticks++;
 }
 
-#define startTimer() MAP_SysTick_setPeriod(300);    /* 1ms resolution */ \
+#define startTimer() MAP_SysTick_setPeriod(300);    /* 0.1ms resolution */ \
                      MAP_SysTick_enableInterrupt();                       \
                      /* Enabling MASTER interrupts */                     \
                      MAP_Interrupt_enableMaster();                        \
