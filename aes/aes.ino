@@ -55,9 +55,13 @@ uint8_t key[] = { 0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73,
                   0x3b, 0x61, 0x08, 0xd7, 0x2d, 0x98, 0x10, 0xa3, 0x09, 0x14,
                   0xdf, 0xf4
                 };
-uint8_t check_encrypt[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c,
-                            0x06, 0x4b, 0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8
-                          };
+uint8_t expected_pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96,
+                          0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a
+                        };
+uint8_t expected_ct[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c,
+                          0x06, 0x4b, 0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8
+                        };
+
 #ifdef AES_CBC
 uint8_t pt[MSG_LNGTH];
 uint8_t ct[MSG_LNGTH];
@@ -72,7 +76,6 @@ uint8_t pt[] = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d,
 uint8_t ct[] = { 0xf3, 0xee, 0xd1, 0xbd, 0xb5, 0xd2, 0xa0, 0x3c, 0x06, 0x4b,
                  0x5a, 0x7e, 0x3d, 0xb1, 0x81, 0xf8
                };
-unsigned char out[16];
 #endif
 
 /** contexts **/
@@ -84,9 +87,9 @@ struct mbedtls_aes_context ctx;
 #endif
 
 /** define keysizes **/
-#if defined aes_128
+#if defined AES_128
 long keysize = 128;
-#elif defined aes_192
+#elif defined AES_192
 long keysize = 192;
 #else
 long keysize = 256;
@@ -103,7 +106,6 @@ void init_aes()
 #endif
 #ifdef mbedtls_aes
   mbedtls_aes_init(&ctx);
-  mbedtls_aes_setkey_enc(&ctx, key, keysize);
 #endif
 }
 
@@ -111,12 +113,11 @@ void test_encrypt()
 {
   /** Gladman AES **/
 #ifdef gladman_aes
-#ifdef aes_128
-  // aes_gladman_128_encrypt(key, pt, ct);
-  aes_gladman_128_encrypt(key, pt, ct, out);
-#elif aes_192
+#ifdef AES_128
+  aes_gladman_128_encrypt(key, pt, ct);
+#elif AES_192
   aes_gladman_192_encrypt(key, pt, ct);
-#else // aes_256
+#else // AES_256
   aes_gladman_256_encrypt(key, pt, ct);
 #endif
 #endif
@@ -133,6 +134,7 @@ void test_encrypt()
 
   /** MbedTLS AES **/
 #ifdef mbedtls_aes
+  mbedtls_aes_setkey_enc(&ctx, key, keysize);
   mbedtls_internal_aes_encrypt(&ctx, pt, ct);
 #endif
 }
@@ -141,12 +143,11 @@ void test_decrypt()
 {
   /** Gladman AES **/
 #ifdef gladman_aes
-#ifdef aes_128
-  // aes_gladman_128_decrypt(key, ct, pt);
-  aes_gladman_128_decrypt(key, ct, pt, out);
-#elif aes_192
+#ifdef AES_128
+  aes_gladman_128_decrypt(key, ct, pt);
+#elif AES_192
   aes_gladman_192_decrypt(key, ct, pt);
-#else // aes_256
+#else // AES_256
   aes_gladman_256_decrypt(key, ct, pt);
 #endif
 #endif
@@ -163,14 +164,28 @@ void test_decrypt()
 
   /** MbedTLS AES **/
 #ifdef mbedtls_aes
-  mbedtls_internal_aes_decrypt(&ctx, pt, ct);
+  mbedtls_aes_setkey_dec(&ctx, key, keysize);
+  mbedtls_internal_aes_decrypt(&ctx, ct, pt);
 #endif
 }
 
-int check_result()
-{
-  return memcmp((char*) pt, (char*) check_encrypt, 16);
-}
+///******************************
+//
+//   Function to verify encryption
+//
+// ******************************/
+//int check_encrypt() {
+//  return memcmp((char*) expected_ct, (char*) ct, sizeof(expected_ct));
+//}
+//
+///******************************
+//
+//   Function to verify decryption
+//
+// ******************************/
+//int check_decrypt() {
+//  return memcmp((char*) expected_pt, (char*) pt, sizeof(expected_pt));
+//}
 
 #ifdef AES_CBC
 void aes_encrypt_cbc(size_t length) {
@@ -238,19 +253,22 @@ void loop() {
   unsigned long start, finished, elapsed;
   start = micros();
 #endif
- 
+
   /** initialize AES **/
   init_aes();
 
   /** Choose the function to be called **/
   /** Encrypt or decrypt possibly many times **/
   /** test aes **/
-  test_encrypt();
-  //test_decrypt();
+//  test_encrypt();
+  test_decrypt();
+  //aes_encrypt_cbc(sizeof(pt));
+  //aes_decrypt_cbc(sizeof(ct));
 
   /** Check the result to see whether RSA algorithm is correctly working or not **/
-  check_result();
- 
+  //volatile unsigned int verify = check_encrypt(); // Check the validity of an encryption method
+  //volatile unsigned int verify = check_decrypt(); // Check the validity of a decryption method
+
 #ifdef msp432p401r
   volatile unsigned int elapsed = getElapsedTime();
 #endif
@@ -260,7 +278,7 @@ void loop() {
   elapsed = finished - start;
   Serial.print("Time taken by the task: ");
   Serial.println(elapsed);
- 
+
   // wait a second so as not to send massive amounts of data
   delay(1000);
 #endif
