@@ -26,10 +26,15 @@
 #define AES_BLOCK_SIZE_BITS 128
 #define AES_BLOCK_SIZE_BYTES (AES_BLOCK_SIZE_BITS/8)
 
- // Stop watchdog timer
-#if defined(msp430g2553) || defined(msp430fr5994)
+// Stop watchdog timer
+#if defined(msp430g2553)
     #define board_init()    WDTCTL = WDTPW | WDTHOLD
 #endif
+#if defined(msp430fr5994)
+    // Disable the GPIO power-on default high-impedance mode
+    // to activate previously configured port settings
+    #define board_init()    WDTCTL = WDTPW | WDTHOLD; PM5CTL0 &= ~LOCKLPM5
+#endif                 
 #ifdef msp432p401r
     #define board_init() WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD
 #endif
