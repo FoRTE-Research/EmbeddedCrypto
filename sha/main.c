@@ -94,15 +94,15 @@ void test_sha256()
 // hash now contains the output of SHA-256
 }
 
-int check_result()
-{
-    return memcmp((uint8_t*) hash, (uint8_t*) check_sha256, DIGEST_BYTES);
-}
+//int check_result()
+//{
+//    return memcmp((uint8_t*) hash, (uint8_t*) check_sha256, DIGEST_BYTES);
+//}
 
 int main(int argc, char *argv[])
 {
 
-#ifdef msp432p401r
+#if defined msp432p401r || defined msp430fr5994
     /** Initialize the board **/
     board_init();
 
@@ -117,9 +117,9 @@ int main(int argc, char *argv[])
     test_sha256();
 
     /** Check the result to see whether SHA algorithm is correctly working or not **/
-    volatile unsigned int verify = check_result();
+//    volatile unsigned int verify = check_result();
 
-#ifdef msp432p401r
+#if defined msp432p401r || defined msp430fr5994
     volatile unsigned int elapsed = getElapsedTime();
 #endif
 
