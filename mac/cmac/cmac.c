@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #include "cmac.h"
-#include "../../aes/aes.h"
+#include "../../aes/test.h"
 #include "utils.h"
 #include "../config.h"
 
@@ -39,7 +39,7 @@ void init_aes_context(unsigned char* key){
 #endif
 }
 
-// Calculate the CAMC
+// Calculate the CMAC
 unsigned char* aes_cmac(unsigned char* in, unsigned int length, unsigned char* out, unsigned char* key)
 {
     unsigned char* K1;
@@ -68,9 +68,9 @@ unsigned char* aes_cmac(unsigned char* in, unsigned int length, unsigned char* o
         memset(M[0] + length, 0x80, 1);
     }
     if (flag) {
-        block_xor(M[n - 1], M[n - 1], K1);
+        block_xor_cmac(M[n - 1], M[n - 1], K1);
     } else {
-        block_xor(M[n - 1], M[n - 1], K2);
+        block_xor_cmac(M[n - 1], M[n - 1], K2);
     }
 
     unsigned char X[] = {
@@ -84,7 +84,7 @@ unsigned char* aes_cmac(unsigned char* in, unsigned int length, unsigned char* o
 
     init_aes_context(key);
     for (auto i = 0; i < n - 1; i++) {
-        block_xor(Y, M[i], X);
+        block_xor_cmac(Y, M[i], X);
 //        aes_128_encrypt(Y, X, key);
 #ifdef gladman_cmac
         aes_gladman_128_encrypt(key, Y, ct, X);
@@ -98,7 +98,7 @@ unsigned char* aes_cmac(unsigned char* in, unsigned int length, unsigned char* o
 #endif
 
     }
-    block_xor(Y, M[n - 1], X);
+    block_xor_cmac(Y, M[n - 1], X);
 //    aes_128_encrypt(Y, out, key);
 #ifdef gladman_cmac
     aes_gladman_128_encrypt(key, Y, ct, out);
@@ -151,11 +151,11 @@ void GenerateSubkey(unsigned char* key, unsigned char* K1, unsigned char* K2)
     aes_128_encrypt(const_Zero, L, key);
     block_leftshift(K1, L);
     if (L[0] & 0x80) {
-        block_xor(K1, K1, const_Rb);
+        block_xor_cmac(K1, K1, const_Rb);
     }
 
     block_leftshift(K2, K1);
     if (K1[0] & 0x80) {
-        block_xor(K2, K2, const_Rb);
+        block_xor_cmac(K2, K2, const_Rb);
     }
 }

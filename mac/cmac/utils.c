@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "utils.h"
-#include "../../aes/aes.h"
+#include "../../aes/test.h"
 #include "cmac.h"
 
 #define PASSORFAIL "\033[1;32mpassed\033[0m" : "\033[1;31mfailed\033[0m"
@@ -15,7 +15,7 @@ void print_bytes(unsigned char* buf, const size_t len)
     printf("\n");
 }
 
-void block_xor(unsigned char* dst, unsigned char* a, unsigned char* b)
+void block_xor_cmac(unsigned char* dst, unsigned char* a, unsigned char* b)
 {
     for (auto j = 0; j < 16; j++) {
         dst[j] = a[j] ^ b[j];
