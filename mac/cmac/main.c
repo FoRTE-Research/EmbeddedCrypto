@@ -15,16 +15,8 @@
 #include "cmac.h"
 #include "utils.h"
 
-void run();
+int main() {
 
-int main()
-{
-    run();
-    return 0;
-}
-
-void run()
-{
 #ifdef msp432p401r
     /** Initialize the board **/
     board_init();
@@ -37,7 +29,7 @@ void run()
                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
     unsigned char message[] =
-    { "Information Security is a multidisciplinary area of study and professional activity which is concerned with the development and implementation of security mechanisms of all available types (technical, organizational, human-oriented and legal) to keep information in all its locations (within and outside the organization's perimeter) and, consequently, information systems, where information is created, processed, stored, transmitted and destroyed, free from threats. This project is finished by GUORUI XU." };
+            { "Information Security is a multidisciplinary area of study and professional activity which is concerned with the development and implementation of security mechanisms of all available types (technical, organizational, human-oriented and legal) to keep information in all its locations (within and outside the organization's perimeter) and, consequently, information systems, where information is created, processed, stored, transmitted and destroyed, free from threats. This project is finished by GUORUI XU." };
 
     unsigned char out[16];
 
@@ -49,4 +41,5 @@ void run()
     volatile unsigned int elapsed = getElapsedTime();
 #endif
 
+    while (1);
 }
