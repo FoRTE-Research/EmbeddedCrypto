@@ -5,7 +5,7 @@ void SysTick_Handler(void) {
     ticks++;
 }
 
-#define startTimer() MAP_SysTick_setPeriod(300);    /* 1ms resolution */ \
+#define startTimer() MAP_SysTick_setPeriod(300);    /* 0.1ms resolution */ \
                      MAP_SysTick_enableInterrupt();                       \
                      /* Enabling MASTER interrupts */                     \
                      MAP_Interrupt_enableMaster();                        \
@@ -31,9 +31,14 @@ __interrupt void TimeA0 (void)
 #define getElapsedTime() (ticks - start)
 
 // Stop watchdog timer
-#if defined(msp430g2553) || defined(msp430fr5994)
-   #define board_init()    WDTCTL = WDTPW | WDTHOLD
+#if defined(msp430g2553)
+    #define board_init()    WDTCTL = WDTPW | WDTHOLD
+#endif
+#if defined(msp430fr5994)
+    // Disable the GPIO power-on default high-impedance mode
+    // to activate previously configured port settings
+    #define board_init()    WDTCTL = WDTPW | WDTHOLD; PM5CTL0 &= ~LOCKLPM5
 #endif
 #ifdef msp432p401r
-   #define board_init() WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD
+    #define board_init() WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD
 #endif
