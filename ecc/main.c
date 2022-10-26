@@ -4,7 +4,9 @@
 //#define MBEDTLS
 
 /** need to uncomment if the board you are using is MSP432P401R **/
-#define msp432p401r
+//#define msp432p401r
+//#define msp430g2553
+#define msp430fr5994
 //#define riscv
 
 #include <assert.h>
@@ -233,15 +235,23 @@ int check_result() {
 }
 
 int main(void) {
+ 
+#if defined msp432p401r || defined msp430fr5994
+    /** Initialize the board **/
     board_init();
 
+    /** Starting the timer to measure elapsed time **/
     startTimer();
+#endif
 
     init_ecc();
     generate_share_secret();
-    volatile unsigned int verify = check_result();
+//    volatile unsigned int verify = check_result();
 
+#if defined msp432p401r || defined msp430fr5994
     volatile unsigned int elapsed = getElapsedTime();
+#endif
 
     while(1);
+ 
 }
