@@ -4,7 +4,9 @@
 //#define mbedtls_sha
 
 /** need to uncomment if the board you are using is MSP432P401R **/
-#define msp432p401r
+//#define msp432p401r
+//#define msp430g2553
+#define msp430fr5994
 //#define riscv
 
 /// DO NOT EDIT BELOW  //////////////////////////////////////////
