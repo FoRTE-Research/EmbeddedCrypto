@@ -1847,7 +1847,7 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-        if( verbose != 0 )
+//        if( verbose != 0 )
 //            mbedtls_printf( "passed\n" );
     }
 
@@ -1921,7 +1921,7 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-        if( verbose != 0 )
+//        if( verbose != 0 )
 //            mbedtls_printf( "passed\n" );
     }
 
@@ -1984,7 +1984,7 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-        if( verbose != 0 )
+//        if( verbose != 0 )
 //            mbedtls_printf( "passed\n" );
     }
 
@@ -2047,7 +2047,7 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-        if( verbose != 0 )
+//        if( verbose != 0 )
 //            mbedtls_printf( "passed\n" );
     }
 
@@ -2099,7 +2099,7 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-        if( verbose != 0 )
+//        if( verbose != 0 )
 //            mbedtls_printf( "passed\n" );
     }
 
