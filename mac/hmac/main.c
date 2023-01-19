@@ -3,7 +3,7 @@
 /** need to uncomment if the board you are using **/
 //#define msp432p401r
 //#define msp430g2553
-#define msp430fr5994
+//#define msp430fr5994
 //#define riscv
 
 #ifdef msp432p401r
@@ -21,14 +21,19 @@
 
 #ifdef msp430fr5994
 #include "msp430.h"
-#include "experiment_time.h"
+#include "../experiment_time.h"
 #endif
 
-#include "cmac.h"
-#include "utils.h"
+#include "hmac_sha256.h"
 
-int main()
-{
+#include <assert.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
+#define SHA256_HASH_SIZE 32
+
+int main() {
 #if defined msp432p401r || defined msp430fr5994
     /** Initialize the board **/
     board_init();
@@ -36,21 +41,50 @@ int main()
     /** Starting the timer to measure elapsed time **/
     startTimer();
 #endif
+    const char* str_data = "Hello World!";
+    const char* str_key = "super-secret-key";
+    uint8_t out[SHA256_HASH_SIZE];
+    char out_str[SHA256_HASH_SIZE * 2 + 1];
+    unsigned i;
 
-    unsigned char key[] = { 0x31, 0x50, 0x10, 0x47, 0x17, 0x00, 0x00, 0x00,
-                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    // Call hmac-sha function
+    hmac_sha256(str_key, strlen(str_key), str_data, strlen(str_data), &out,
+                sizeof(out));
 
-    unsigned char message[] =
-    { "Information Security is a multidisciplinary area of study and professional activity which is concerned with the development and implementation of security mechanisms of all available types (technical, organizational, human-oriented and legal) to keep information in all its locations (within and outside the organization's perimeter) and, consequently, information systems, where information is created, processed, stored, transmitted and destroyed, free from threats. This project is finished by GUORUI XU." };
+    // Convert `out` to string with printf
+    memset(&out_str, 0, sizeof(out_str));
+    for (i = 0; i < sizeof(out); i++) {
+        snprintf(&out_str[i*2], 3, "%02x", out[i]);
+    }
 
-    unsigned char out[16];
+//     Print out the result
+    printf("Message: %s\n", str_data);
+    printf("Key: %s\n", str_key);
+    printf("HMAC: %s\n", out_str);
 
-    aes_cmac(message, strlen((char*) message) + 1, (unsigned char*) out, key);
-    //    printf("%sAES-128-CMAC Result%s\n", ACCENTCOLOR, DEFAULT);
-    //    print_bytes(out, 16);
-
+    // This assertion fails if something went wrong
+    assert(strncmp(
+            out_str,
+            "4b393abced1c497f8048860ba1ede46a23f1ff5209b18e9c428bddfbb690aad8",
+            SHA256_HASH_SIZE * 2) == 0);
 #if defined msp432p401r || defined msp430fr5994
     volatile unsigned int elapsed = getElapsedTime();
 #endif
     return 0;
 }
+
+//=========================================================================================================
+//#include "chez/hmac_sha256.h"
+//
+//int main() {
+//    char* str_data = "Hello World!";
+//    char* str_key = "super-secret-key";
+//
+//    hs256(str_data, str_key);
+//}
+
+
+//0xe097fffaa0
+//0xe097fffa80
+
+//0xe8497ff890
