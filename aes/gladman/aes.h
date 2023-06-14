@@ -24,10 +24,6 @@ Issue Date: 02/09/2018
 #ifndef _AES_H
 #define _AES_H
 
-#define AES_128
-#define AES_192
-#define AES_256
-
 #include <stdlib.h>
 
 /*  This include is used to find 8 & 32 bit unsigned integer types   */
