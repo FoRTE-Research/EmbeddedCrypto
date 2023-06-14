@@ -14,9 +14,9 @@
 #define adafruitm0express
 
 /** need to define key size **/
-//#define aes_128 1
-// #define aes_192 1
- #define aes_256 1
+//#define AES_128 1
+// #define AES_192 1
+ #define AES_256 1
 
 /** can define block chaining **/
 //#define AES_CBC
