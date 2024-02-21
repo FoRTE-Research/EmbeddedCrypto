@@ -4,14 +4,15 @@
 //#define riscv
 //#define saml11
 //#define apollo3
-// #define msp430f5529
+//  #define msp430f5529
 //#define msp430fr5994
 //#define msp432p401r
 #define adafruitm0express
 
-// #define portable8439
-// #define chacha_avr
-#define ChaCha20_rfc7539
+//#define portable8439
+//#define chacha_avr
+//#define ChaCha20_rfc7539
+#define mbedtls
 
 #include <stdio.h>
 #include <stdint.h>
@@ -87,7 +88,7 @@ static const uint8_t welcoming_str[] = "Time: \r\n";
 #endif
 
 #ifdef portable8439
-#include "chacha-portable.h"
+#include "portable8439/chacha-portable/chacha-portable.h"
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
@@ -95,13 +96,25 @@ static const uint8_t welcoming_str[] = "Time: \r\n";
 #endif
 
 #ifdef chacha_avr
-#include "chacha.h"
+#include "chacha20_avr\chacha.h"
 #endif
 
 #ifdef ChaCha20_rfc7539
 #define CHACHA20_IMPLEMENTATION
 #define CHACHA20_NO_UNDEF
-#include "ChaCha20.h"
+#include "D:\AmbiqSuiteSDK-master\boards\apollo3_evb\examples\apollo3_chacha\keil\ChaCha20-rfc7539\ChaCha20.h"
+#endif
+
+#ifdef mbedtls
+#include <string.h>
+#include <stdlib.h>
+#define MBEDTLS_ALLOW_PRIVATE_ACCESS
+#define MBEDTLS_CHACHA20_C
+#include "C:\Users\kuthe\Documents\Arduino\AdafruitM0MetroExpress\chacha20\mbedtls\build_info.h"
+#include "C:\Users\kuthe\Documents\Arduino\AdafruitM0MetroExpress\chacha20\mbedtls\platform.h"
+#include "C:\Users\kuthe\Documents\Arduino\AdafruitM0MetroExpress\chacha20\mbedtls\chacha20.h"
+#include "C:\Users\kuthe\Documents\Arduino\AdafruitM0MetroExpress\chacha20\mbedtls\chacha20.c"
+#include "C:\Users\kuthe\Documents\Arduino\AdafruitM0MetroExpress\chacha20\mbedtls\platform_util.c"
 #endif
 
 #ifdef portable8439
@@ -252,6 +265,66 @@ void chacha20_init()
 }
 #endif
 
+#ifdef mbedtls
+
+uint8_t key[32] = {
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+    0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f
+};
+
+uint8_t nonce[12] = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4a,
+    0x00, 0x00, 0x00, 0x00
+};
+
+uint32_t count = 0x00000001;
+
+const unsigned char plaintext[114]= {
+    0x4c, 0x61, 0x64, 0x69, 0x65, 0x73, 0x20, 0x61,
+    0x6e, 0x64, 0x20, 0x47, 0x65, 0x6e, 0x74, 0x6c,
+    0x65, 0x6d, 0x65, 0x6e, 0x20, 0x6f, 0x66, 0x20,
+    0x74, 0x68, 0x65, 0x20, 0x63, 0x6c, 0x61, 0x73,
+    0x73, 0x20, 0x6f, 0x66, 0x20, 0x27, 0x39, 0x39,
+    0x3a, 0x20, 0x49, 0x66, 0x20, 0x49, 0x20, 0x63,
+    0x6f, 0x75, 0x6c, 0x64, 0x20, 0x6f, 0x66, 0x66,
+    0x65, 0x72, 0x20, 0x79, 0x6f, 0x75, 0x20, 0x6f,
+    0x6e, 0x6c, 0x79, 0x20, 0x6f, 0x6e, 0x65, 0x20,
+    0x74, 0x69, 0x70, 0x20, 0x66, 0x6f, 0x72, 0x20,
+    0x74, 0x68, 0x65, 0x20, 0x66, 0x75, 0x74, 0x75,
+    0x72, 0x65, 0x2c, 0x20, 0x73, 0x75, 0x6e, 0x73,
+    0x63, 0x72, 0x65, 0x65, 0x6e, 0x20, 0x77, 0x6f,
+    0x75, 0x6c, 0x64, 0x20, 0x62, 0x65, 0x20, 0x69,
+    0x74, 0x2e
+};
+
+const unsigned char ciphertext[114] = {
+    0x6e, 0x2e, 0x35, 0x9a, 0x25, 0x68, 0xf9, 0x80,
+    0x41, 0xba, 0x07, 0x28, 0xdd, 0x0d, 0x69, 0x81,
+    0xe9, 0x7e, 0x7a, 0xec, 0x1d, 0x43, 0x60, 0xc2,
+    0x0a, 0x27, 0xaf, 0xcc, 0xfd, 0x9f, 0xae, 0x0b,
+    0xf9, 0x1b, 0x65, 0xc5, 0x52, 0x47, 0x33, 0xab,
+    0x8f, 0x59, 0x3d, 0xab, 0xcd, 0x62, 0xb3, 0x57,
+    0x16, 0x39, 0xd6, 0x24, 0xe6, 0x51, 0x52, 0xab,
+    0x8f, 0x53, 0x0c, 0x35, 0x9f, 0x08, 0x61, 0xd8,
+    0x07, 0xca, 0x0d, 0xbf, 0x50, 0x0d, 0x6a, 0x61,
+    0x56, 0xa3, 0x8e, 0x08, 0x8a, 0x22, 0xb6, 0x5e,
+    0x52, 0xbc, 0x51, 0x4d, 0x16, 0xcc, 0xf8, 0x06,
+    0x81, 0x8c, 0xe9, 0x1a, 0xb7, 0x79, 0x37, 0x36,
+    0x5a, 0xf9, 0x0b, 0xbf, 0x74, 0xa3, 0x5b, 0xe6,
+    0xb4, 0x0b, 0x8e, 0xed, 0xf2, 0x78, 0x5e, 0x42,
+    0x87, 0x4d
+};
+
+unsigned char buffer[114] = {0};
+unsigned char buffer1[114] = {0};
+const uint8_t size = 114;
+
+struct mbedtls_chacha20_context ctx;
+
+#endif
+
 void test_enc()
 {
 #ifdef portable8439
@@ -280,6 +353,9 @@ void test_enc()
     memcpy(buffer, plain_data, 114);
 #endif
 
+#ifdef mbedtls
+    mbedtls_chacha20_crypt(key, nonce, count, size, plaintext, buffer);
+#endif
 }
 
 void test_dec()
@@ -307,6 +383,9 @@ void test_dec()
     memcpy(buffer, cipher_data, 114);
 #endif
 
+#ifdef mbedtls
+    mbedtls_chacha20_crypt(key, nonce, count, size, ciphertext, buffer1);
+#endif
 }
 
 ///******************************
@@ -339,6 +418,15 @@ int check_encrypt() {
     }
     else {
         return 1;
+    }
+    #endif
+
+    #ifdef mbedtls
+    if (memcmp(buffer, ciphertext, size) != 0) {
+       return -1;
+    }
+    else {
+      return 1;
     }
     #endif
     return 0;
@@ -378,6 +466,15 @@ int check_decrypt() {
     else
     {
         return 1;
+    }
+    #endif
+
+    #ifdef mbedtls
+    if (memcmp(buffer1, plaintext, size) != 0) {
+       return -1;
+    }
+    else {
+      return 1;
     }
     #endif
     return 0;
@@ -749,11 +846,15 @@ void init(void){
 #endif
 
 //Use void loop instead of int main for arduino
-// void loop()
-int main (void)
+void loop()
+// int main (void)
 {
 #ifdef ChaCha20_rfc7539
     chacha20_init();
+#endif
+
+#ifdef mbedtls
+    mbedtls_chacha20_init(&ctx);
 #endif
 
 #ifdef riscv
@@ -803,8 +904,10 @@ int main (void)
 #endif
 
   /** test CHACHA **/
-     test_enc();
-      // test_dec();
+    // test_enc();
+       test_dec();
+    // int verify = check_encrypt();
+//     int verify = check_decrypt();
 
 #ifdef riscv
     // Get the end cycle count
@@ -894,7 +997,7 @@ int main (void)
   delay(1000);
 #endif
 
-    #if !defined(adafruitm0express) 
+    #if !defined(adafruitm0express)
       while(1);
       return 0;
     #endif
