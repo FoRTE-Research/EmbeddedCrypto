@@ -30,9 +30,12 @@ __interrupt void TimeA0 (void)
 
 #define getElapsedTime() (ticks - start)
 
-// Stop watchdog timer
-#if defined(msp430g2553) || defined(msp430fr5994)
-   #define board_init()    WDTCTL = WDTPW | WDTHOLD
+// Stop watchdog timer and clear GPIO high-z for FRAM
+#ifdef msp430g2553
+    #define board_init() WDTCTL = WDTPW | WDTHOLD
+#endif
+#ifdef msp430fr5994
+    #define board_init() WDTCTL = WDTPW | WDTHOLD; PM5CTL0 &= ~LOCKLPM5
 #endif
 #ifdef msp432p401r
    #define board_init() WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD
