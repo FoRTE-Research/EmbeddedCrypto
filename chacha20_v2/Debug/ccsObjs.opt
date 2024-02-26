@@ -1,0 +1,6 @@
+"./main.obj"
+"./uart.obj"
+"./mbedtls/chacha20.obj"
+"./mbedtls/platform_util.obj"
+"../lnk_msp430g2553.cmd"
+-llibc.a

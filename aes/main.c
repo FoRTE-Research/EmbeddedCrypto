@@ -2,6 +2,9 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "uart.h"
 
 #ifdef msp432p401r
 #include "msp.h"
@@ -151,9 +154,9 @@ void test_decrypt()
 // * Function to verify encryption
 // *
 // ******************************/
-//int check_encrypt() {
-//    return memcmp((char*) expected_ct, (char*) ct, sizeof(expected_ct));
-//}
+int check_encrypt() {
+    return memcmp((char*) expected_ct, (char*) ct, sizeof(expected_ct));
+}
 //
 ///******************************
 // *
@@ -204,6 +207,7 @@ void aes_decrypt_cbc(size_t length) {
         // IV is now CT
         memcpy(iv, c, AES_BLOCK_SIZE_BYTES);
 
+
         // Go to next block of PT
         p += AES_BLOCK_SIZE_BYTES;
         c += AES_BLOCK_SIZE_BYTES;
@@ -215,23 +219,28 @@ void aes_decrypt_cbc(size_t length) {
 void main(void) {
     board_init();
 
-    startTimer();
-
     /** initialize AES **/
     init_aes();
 
-    /** Choose the function to be called **/
-    /** Encrypt or decrypt possibly many times **/
-//    test_encrypt();
-    test_decrypt();
-//    aes_encrypt_cbc(sizeof(pt));
-    //aes_decrypt_cbc(sizeof(ct));
+    P2OUT = 0x01;  // Pin 2 = 1
+    P2DIR = 0xFF;  // Pin 2 = output
 
-    /** Check the result to see whether AES algorithm is correctly working or not **/
-//    volatile unsigned int verify = check_encrypt(); // Check the validity of an encryption method
-//    volatile unsigned int verify = check_decrypt(); // Check the validity of a decryption method
+    startTimer();
 
+    int i;
+    for(i = 0; i < 8192; i++) {
+        test_encrypt();
+        if (check_encrypt() != 0) {
+            i--; // Retry this attempt
+        }
+    }
+
+    P2OUT = 0x00;  // Pin 2 = 0
     volatile unsigned int elapsed = getElapsedTime();
+
+    char result[5];
+    sprintf(result, "%d", elapsed);
+    print_UART(result);
 
     while (1);
 }

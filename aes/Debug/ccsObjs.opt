@@ -1,0 +1,5 @@
+"./main.obj"
+"./uart.obj"
+"./tiny_aes/aes.obj"
+"../lnk_msp430g2553.cmd"
+-llibc.a

@@ -2,16 +2,16 @@
 #define AES_TEST_H_
 
 /** need to choose which AES implementation to run **/
-#define gladman_aes
+//#define gladman_aes
 //#define slow_tiny_aes
-//#define tiny_aes
+#define tiny_aes
 //#define mbedtls_aes
 
 /** need to uncomment if the board you are using is MSP432P401R **/
 // #define msp432p401r
-//#define msp430g2553
+#define msp430g2553
 //#define riscv
-#define adafruitm0express
+//#define adafruitm0express
 
 /** need to define key size **/
 //#define AES_128 1

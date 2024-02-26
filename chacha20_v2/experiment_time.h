@@ -14,7 +14,6 @@ void SysTick_Handler(void) {
                      unsigned int start = ticks;
 #endif
 
-#if defined(msp430g2553) || defined(msp430fr5994)
 // Timer A0 interrupt service routine
 #pragma vector=TIMER1_A0_VECTOR
 __interrupt void TimeA1 (void)
@@ -32,6 +31,5 @@ __interrupt void TimeA1 (void)
                      TA1CCR0 =  128;                  /* 1 KHz */                     \
                      __bis_SR_register(GIE);         /* Enable all interrupts */     \
                      unsigned int start = ticks_s;
-#endif
 
 #define getElapsedTime() (ticks_s - start)
