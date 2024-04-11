@@ -399,9 +399,10 @@ static int aes_init_done = 0;
 
 static void aes_gen_tables( void )
 {
-    int i, x, y, z;
-    int pow[256];
-    int log[256];
+    int i;  
+    int x, y, z;
+    uint8_t pow[256];
+    uint8_t log[256];
 
     /*
      * compute pow and log tables over GF(2^8)
@@ -1802,7 +1803,8 @@ int mbedtls_aes_self_test( int verbose )
         keybits = 128 + u * 64;
         mode = i & 1;
 
-        if( verbose != 0 )
+        //SK
+//        if( verbose != 0 )
 //            mbedtls_printf( "  AES-ECB-%3u (%s): ", keybits,
 //                            ( mode == MBEDTLS_AES_DECRYPT ) ? "dec" : "enc" );
 
@@ -1826,7 +1828,7 @@ int mbedtls_aes_self_test( int verbose )
          */
         if( ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED && keybits == 192 )
         {
-//            mbedtls_printf( "skipped\n" );
+            mbedtls_printf( "skipped\n" );
             continue;
         }
         else if( ret != 0 )
@@ -1847,12 +1849,12 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-//        if( verbose != 0 )
-//            mbedtls_printf( "passed\n" );
+        if( verbose != 0 )
+            mbedtls_printf( "passed\n" );
     }
 
     if( verbose != 0 )
-//        mbedtls_printf( "\n" );
+        mbedtls_printf( "\n" );
 
 #if defined(MBEDTLS_CIPHER_MODE_CBC)
     /*
@@ -1864,7 +1866,8 @@ int mbedtls_aes_self_test( int verbose )
         keybits = 128 + u * 64;
         mode = i & 1;
 
-        if( verbose != 0 )
+        //SK
+//        if( verbose != 0 )
 //            mbedtls_printf( "  AES-CBC-%3u (%s): ", keybits,
 //                            ( mode == MBEDTLS_AES_DECRYPT ) ? "dec" : "enc" );
 
@@ -1890,7 +1893,7 @@ int mbedtls_aes_self_test( int verbose )
          */
         if( ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED && keybits == 192 )
         {
-//            mbedtls_printf( "skipped\n" );
+            mbedtls_printf( "skipped\n" );
             continue;
         }
         else if( ret != 0 )
@@ -1921,12 +1924,12 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-//        if( verbose != 0 )
-//            mbedtls_printf( "passed\n" );
+        if( verbose != 0 )
+            mbedtls_printf( "passed\n" );
     }
 
     if( verbose != 0 )
-//        mbedtls_printf( "\n" );
+        mbedtls_printf( "\n" );
 #endif /* MBEDTLS_CIPHER_MODE_CBC */
 
 #if defined(MBEDTLS_CIPHER_MODE_CFB)
@@ -1939,7 +1942,8 @@ int mbedtls_aes_self_test( int verbose )
         keybits = 128 + u * 64;
         mode = i & 1;
 
-        if( verbose != 0 )
+        //SK
+//        if( verbose != 0 )
 //            mbedtls_printf( "  AES-CFB128-%3u (%s): ", keybits,
 //                            ( mode == MBEDTLS_AES_DECRYPT ) ? "dec" : "enc" );
 
@@ -1955,7 +1959,7 @@ int mbedtls_aes_self_test( int verbose )
          */
         if( ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED && keybits == 192 )
         {
-//            mbedtls_printf( "skipped\n" );
+            mbedtls_printf( "skipped\n" );
             continue;
         }
         else if( ret != 0 )
@@ -1984,12 +1988,12 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-//        if( verbose != 0 )
-//            mbedtls_printf( "passed\n" );
+        if( verbose != 0 )
+            mbedtls_printf( "passed\n" );
     }
 
     if( verbose != 0 )
-//        mbedtls_printf( "\n" );
+        mbedtls_printf( "\n" );
 #endif /* MBEDTLS_CIPHER_MODE_CFB */
 
 #if defined(MBEDTLS_CIPHER_MODE_OFB)
@@ -2002,7 +2006,8 @@ int mbedtls_aes_self_test( int verbose )
         keybits = 128 + u * 64;
         mode = i & 1;
 
-        if( verbose != 0 )
+        //SK
+//        if( verbose != 0 )
 //            mbedtls_printf( "  AES-OFB-%3u (%s): ", keybits,
 //                            ( mode == MBEDTLS_AES_DECRYPT ) ? "dec" : "enc" );
 
@@ -2018,7 +2023,7 @@ int mbedtls_aes_self_test( int verbose )
          */
         if( ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED && keybits == 192 )
         {
-//            mbedtls_printf( "skipped\n" );
+            mbedtls_printf( "skipped\n" );
             continue;
         }
         else if( ret != 0 )
@@ -2047,12 +2052,12 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-//        if( verbose != 0 )
-//            mbedtls_printf( "passed\n" );
+        if( verbose != 0 )
+            mbedtls_printf( "passed\n" );
     }
 
     if( verbose != 0 )
-//        mbedtls_printf( "\n" );
+        mbedtls_printf( "\n" );
 #endif /* MBEDTLS_CIPHER_MODE_OFB */
 
 #if defined(MBEDTLS_CIPHER_MODE_CTR)
@@ -2065,8 +2070,8 @@ int mbedtls_aes_self_test( int verbose )
         mode = i & 1;
 
         if( verbose != 0 )
-//            mbedtls_printf( "  AES-CTR-128 (%s): ",
-//                            ( mode == MBEDTLS_AES_DECRYPT ) ? "dec" : "enc" );
+            mbedtls_printf( "  AES-CTR-128 (%s): ",
+                            ( mode == MBEDTLS_AES_DECRYPT ) ? "dec" : "enc" );
 
         memcpy( nonce_counter, aes_test_ctr_nonce_counter[u], 16 );
         memcpy( key, aes_test_ctr_key[u], 16 );
@@ -2099,12 +2104,12 @@ int mbedtls_aes_self_test( int verbose )
             goto exit;
         }
 
-//        if( verbose != 0 )
-//            mbedtls_printf( "passed\n" );
+        if( verbose != 0 )
+            mbedtls_printf( "passed\n" );
     }
 
     if( verbose != 0 )
-//        mbedtls_printf( "\n" );
+        mbedtls_printf( "\n" );
 #endif /* MBEDTLS_CIPHER_MODE_CTR */
 
 #if defined(MBEDTLS_CIPHER_MODE_XTS)
@@ -2178,7 +2183,7 @@ int mbedtls_aes_self_test( int verbose )
 
 exit:
     if( ret != 0 && verbose != 0 )
-//        mbedtls_printf( "failed\n" );
+        mbedtls_printf( "failed\n" );
 
     mbedtls_aes_free( &ctx );
 
@@ -2188,3 +2193,4 @@ exit:
 #endif /* MBEDTLS_SELF_TEST */
 
 #endif /* MBEDTLS_AES_C */
+

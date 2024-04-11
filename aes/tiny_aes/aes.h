@@ -3,6 +3,12 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#if !defined riscv
+#include "../test.h"
+#endif
+#if defined riscv
+#include "C:\Users\kuthe\wsFreedomStudio\sifive_hifive1_revb_aes\src\test.h"
+#endif
 
 /*****************************************************************************/
 /* Defines:                                                                  */
@@ -40,7 +46,7 @@ struct AES_ctx
 };
 
 void AES_init_ctx(struct AES_ctx* ctx, const uint8_t* key);
-void AES_encrypt(struct AES_ctx* ctx, uint8_t key[], uint8_t in[], uint8_t out[]);
-uint8_t * AES_decrypt(struct AES_ctx* ctx, uint8_t key[], uint8_t out[], uint8_t in[]);
+void AES_encrypt(struct AES_ctx* ctx, uint8_t in[]);
+uint8_t * AES_decrypt(struct AES_ctx* ctx, uint8_t out[]);
 
 #endif // _AES_H_

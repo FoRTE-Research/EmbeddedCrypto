@@ -22,7 +22,7 @@ Issue Date: 20/12/2007
 // for AES (Rijndael) implementation.  They are used to allow C, C++ and DLL
 // data access and subroutine calls to be expressed in the same form in the
 // testing code.
-
+#include <stdint.h>
 #ifndef AESTST_H
 #define AESTST_H
 
@@ -106,8 +106,8 @@ Issue Date: 20/12/2007
 #define do_dec(a,b,c,d) f_ecb_dec(a, b, c, 1)
 #endif
 void gladman_init(uint8_t *key, uint8_t *pt, uint8_t* ct, long n);
-int aes_gladman_128_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct, unsigned char *out);
-int aes_gladman_128_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct, unsigned char *out);
+int aes_gladman_128_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
+int aes_gladman_128_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
 int aes_gladman_192_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
 int aes_gladman_192_decrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);
 int aes_gladman_256_encrypt(unsigned char *key, unsigned char *pt, unsigned char *ct);

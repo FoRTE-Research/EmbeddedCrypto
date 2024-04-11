@@ -24,6 +24,15 @@ Issue Date: 02/09/2018
 #ifndef _AES_H
 #define _AES_H
 
+#if !defined riscv
+#include "../test.h"
+#endif
+#if defined adafruitm0express || defined msp432p401r
+#define AES_128
+#define AES_192
+#define AES_256
+#endif
+
 #include <stdlib.h>
 
 /*  This include is used to find 8 & 32 bit unsigned integer types   */
@@ -213,5 +222,8 @@ typedef void cbuf_inc(unsigned char *cbuf);
 AES_RETURN aes_ctr_crypt(const unsigned char *ibuf, unsigned char *obuf,
             int len, unsigned char *cbuf, cbuf_inc ctr_inc, aes_encrypt_ctx cx[1]);
 
+#endif
+#ifdef __cplusplus
+}
 #endif
 #endif
