@@ -538,7 +538,6 @@ void setup()
 #endif
 
 int main(void)
-//void loop()
 {
 //    while(1) {  //current while
 #ifdef adafruitm0express
