@@ -70,7 +70,7 @@ on big-endian systems and for his assistance with corrections
 #include <string.h>         /* for memcpy() etc.        */
 
 #include "sha2.h"
-#include "brg_endian.h"
+// #include "brg_endian.h"
 
 #if defined(__cplusplus)
 extern "C"

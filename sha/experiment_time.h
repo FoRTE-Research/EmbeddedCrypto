@@ -1,19 +1,25 @@
-unsigned int ticks = 0;
+#if defined(msp432p401r) || defined(msp430g2553) || defined(msp430f5529)
+unsigned long long int ticks = 0;
+#endif
+
+#if defined(msp430fr5994)
+unsigned long int ticks = 0;
+#endif
 
 #ifdef msp432p401r
 void SysTick_Handler(void) {
     ticks++;
 }
 
-#define startTimer() MAP_SysTick_setPeriod(300);    /* 0.1ms resolution */ \
+#define startTimer() MAP_SysTick_setPeriod(300);    /* 1ms resolution */ \
                      MAP_SysTick_enableInterrupt();                       \
                      /* Enabling MASTER interrupts */                     \
                      MAP_Interrupt_enableMaster();                        \
                      MAP_SysTick_enableModule();   /* Start timer */      \
-                     unsigned int start = ticks;
+                     unsigned long long int start = ticks;
 #endif
 
-#if defined(msp430g2553) || defined(msp430fr5994)
+#if defined(msp430fr5994)
 // Timer A0 interrupt service routine
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void TimeA0 (void)
@@ -25,20 +31,37 @@ __interrupt void TimeA0 (void)
                      TA0CTL = TASSEL_2 + MC_1 + ID_3; /* SMCLK/8 (1 MHz/8), upmode */ \
                      TA0CCR0 =  128;                  /* 1 KHz */                     \
                      __bis_SR_register(GIE);         /* Enable all interrupts */     \
-                     unsigned int start = ticks
+                     unsigned long int start = ticks;
 #endif
 
-#define getElapsedTime() (ticks - start)
+#if defined(msp430g2553) || defined(msp430f5529)
+// Timer A0 interrupt service routine
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void TimeA0 (void)
+{
+  ticks++;
+}
+
+#define startTimer() TA0CCTL0 = CCIE;                 /* CCR0 interrupt enabled */    \
+                     TA0CTL = TASSEL_2 + MC_1 + ID_3; /* SMCLK/8 (1 MHz/8), upmode */ \
+                     TA0CCR0 =  128;                  /* 1 KHz */                     \
+                     __bis_SR_register(GIE);         /* Enable all interrupts */     \
+                     unsigned long long int start = ticks;
+#endif
 
 // Stop watchdog timer
-#if defined(msp430g2553)
-    #define board_init()    WDTCTL = WDTPW | WDTHOLD
+#if defined(msp430g2553) || defined msp430f5529
+   #define board_init()    WDTCTL = WDTPW | WDTHOLD
 #endif
+
 #if defined(msp430fr5994)
     // Disable the GPIO power-on default high-impedance mode
     // to activate previously configured port settings
     #define board_init()    WDTCTL = WDTPW | WDTHOLD; PM5CTL0 &= ~LOCKLPM5
 #endif
+
 #ifdef msp432p401r
-    #define board_init() WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD
+   #define board_init() WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD
 #endif
+
+#define getElapsedTime() (ticks - start)
