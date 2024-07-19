@@ -10,7 +10,7 @@
 #define uECC_SUPPORTS_secp160r1 0
 #endif
 #ifndef uECC_SUPPORTS_secp192r1
-#define uECC_SUPPORTS_secp192r1 0
+#define uECC_SUPPORTS_secp192r1 1
 #endif
 #ifndef uECC_SUPPORTS_secp224r1
 #define uECC_SUPPORTS_secp224r1 0
@@ -19,7 +19,7 @@
 #define uECC_SUPPORTS_secp256r1 0
 #endif
 #ifndef uECC_SUPPORTS_secp256k1
-#define uECC_SUPPORTS_secp256k1 1
+#define uECC_SUPPORTS_secp256k1 0
 #endif
 
 
@@ -32,7 +32,7 @@
 
 /* What is the default curve to use? */
 #ifndef ECC_CURVE
- #define ECC_CURVE NIST_B163  //change this name to switch curve  ex NIST_B163 -> NIST_B233
+ #define ECC_CURVE NIST_B233  //change this name to switch curve  ex NIST_B163 -> NIST_B233
 #endif
 
 /* MbedTLS ECC */
@@ -57,5 +57,4 @@
     #define ELLIPTIC_CURVE MBEDTLS_ECP_DP_SECP521R1
 #endif
 
-
-#endif //AES_TEST_CURVE_H
+#endif //CURVE_H

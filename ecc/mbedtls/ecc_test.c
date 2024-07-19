@@ -40,7 +40,7 @@
 #include "../curve.h"
 #include "ecdh.h"
 #include "ecp.h"
-#include "error.h"
+// #include "error.h"
 
 mbedtls_ecdh_context ctx_cli, ctx_srv;
 unsigned char *priv_a;
@@ -100,7 +100,7 @@ void mbedtls_init(unsigned char *prv_a, unsigned char *prv_b, unsigned char *cli
 
 int mbedtls_compute_shared()
 {
-    int ret;
+   int ret;
 
     // Compute shared secret
     mbedtls_ecdh_compute_shared( &ctx_srv.grp,            // ECP group

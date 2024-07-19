@@ -2478,6 +2478,7 @@ static const int gcd_pairs[GCD_PAIR_COUNT][3] =
  */
 int mbedtls_mpi_self_test( int verbose )
 {
+    /*
 //    int ret, i;
 //    mbedtls_mpi A, E, N, X, Y, U, V;
 //
@@ -2630,7 +2631,7 @@ int mbedtls_mpi_self_test( int verbose )
 //
 //    if( verbose != 0 )
 //        mbedtls_printf( "\n" );
-
+*/
     return( 1 );
 }
 

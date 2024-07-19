@@ -88,7 +88,8 @@
 #endif
 
 // #include "platform-specific.inc"
-#include "/Users/zeezooryu/Desktop/EmbeddedCrypto_Adafruit_Testing/ecc/bsd/platform-specific.inc"
+//#include "/Users/zeezooryu/Desktop/EmbeddedCrypto_Adafruit_Testing/ecc/bsd/platform-specific.inc"
+#include "C:\ti\msp432_driverlib_3_21_00_05\examples\MSP432P4xx\workspacev12_MSP432\MSP432_ECC_UART_GNU\bsd\platform-specific.inc"
 
 #if (uECC_WORD_SIZE == 1)
     #if uECC_SUPPORTS_secp160r1
@@ -182,7 +183,8 @@ static cmpresult_t uECC_vli_cmp_unsafe(const uECC_word_t *left,
 #if (uECC_PLATFORM == uECC_arm || uECC_PLATFORM == uECC_arm_thumb || \
         uECC_PLATFORM == uECC_arm_thumb2)
     // #include "asm_arm.inc"
-    #include "/Users/zeezooryu/Desktop/EmbeddedCrypto_Adafruit_Testing/ecc/bsd/asm_arm.inc"
+//    #include "/Users/zeezooryu/Desktop/EmbeddedCrypto_Adafruit_Testing/ecc/bsd/asm_arm.inc"
+    #include "C:\ti\msp432_driverlib_3_21_00_05\examples\MSP432P4xx\workspacev12_MSP432\MSP432_ECC_UART_GNU\bsd\asm_arm.inc"
 #endif
 
 #if (uECC_PLATFORM == uECC_avr)
@@ -744,7 +746,8 @@ uECC_VLI_API void uECC_vli_modInv(uECC_word_t *result,
 /* ------ Point operations ------ */
 
 // #include "curve-specific.inc"
-#include "/Users/zeezooryu/Desktop/EmbeddedCrypto_Adafruit_Testing/ecc/bsd/curve-specific.inc"
+//#include "/Users/zeezooryu/Desktop/EmbeddedCrypto_Adafruit_Testing/ecc/bsd/curve-specific.inc"
+#include "C:\ti\msp432_driverlib_3_21_00_05\examples\MSP432P4xx\workspacev12_MSP432\MSP432_ECC_UART_GNU\bsd\curve-specific.inc"
 
 /* Returns 1 if 'point' is the point at infinity, 0 otherwise. */
 #define EccPoint_isZero(point, curve) uECC_vli_isZero((point), (curve)->num_words * 2)
